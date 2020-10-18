@@ -18,13 +18,15 @@ router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
   to.meta && (typeof to.meta.title !== 'undefined' && setDocumentTitle(`${i18nRender(to.meta.title)} - ${domTitle}`))
 
-  next({ path: defaultRoutePath })
+  // next({ path: defaultRoutePath })
+  // next({ path: loginRoutePath })
   /* has token */
   if (storage.get(ACCESS_TOKEN)) {
     if (to.path === loginRoutePath) {
       next({ path: defaultRoutePath })
       NProgress.done()
-    } else {
+    }
+    else {
       // check login user.roles is null
       if (store.getters.roles.length === 0) {
         // request login userInfo
@@ -67,7 +69,11 @@ router.beforeEach((to, from, next) => {
       // 在免登录名单，直接进入
       next()
     } else {
-      next({ path: loginRoutePath, query: { redirect: to.fullPath } })
+      next({ 
+        path: loginRoutePath, 
+        query: { redirect: to.fullPath } 
+      })
+
       NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
     }
   }
