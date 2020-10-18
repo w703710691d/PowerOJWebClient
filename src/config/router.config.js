@@ -131,7 +131,7 @@ export const asyncRouterMap = [
       {
         path: '/scores',
         name: 'Scores',
-        component: () => import('@/views/scores/Scores'),
+        component: () => import('@/views/scores/Scores-text2'),
         meta: { title: 'Scores', icon: 'table', keepAlive: true }
       }
 

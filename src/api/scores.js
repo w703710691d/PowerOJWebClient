@@ -5,7 +5,7 @@ import request from '@/utils/request'
  */
 export function getScoreByTime (parameter) {
   return request({
-    url: "/dev/score/getScoreByTime",
+    url: "http://192.168.1.112:8090/dev/score/getScoreByTime",
     method: 'get',
     params: parameter
   })
