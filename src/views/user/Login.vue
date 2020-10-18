@@ -124,6 +124,7 @@ export default {
   components: {
     TwoStepCaptcha
   },
+  name:'userlogin',
   data () {
     return {
       customActiveKey: 'tab1',
