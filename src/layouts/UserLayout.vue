@@ -13,7 +13,7 @@
         </div>
       </div>
 
-      <rout er-view />
+      <router-view />
 
       <div class="footer">
         <div class="links">
