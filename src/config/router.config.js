@@ -209,10 +209,11 @@ export const asyncRouterMap = [
  * @type { *[] }
  */
 export const constantRouterMap = [
+
   {
     path: '/user',
     component: UserLayout,
-    redirect: '/user/login',
+    // redirect: '/user/login',
     hidden: true,
     children: [
       {
@@ -226,21 +227,46 @@ export const constantRouterMap = [
         component: () => import('@/views/user/Register')
       },
       {
-        path: 'register-result',
+        path: 'rsegisterresult',
         name: 'registerResult',
         component: () => import('@/views/user/RegisterResult')
       },
       {
         path: 'recover',
         name: 'recover',
-        component: undefined
+        component: () => import('@/views/user/recover')
       }
     ]
   },
+  {
+    path: '/',
+    name: 'index',
+    component: BasicLayout,
+    meta: { title: 'menu.home' },
+    // redirect: '/problem', // 重定向
+    children:[
+      {
+        path: '/problem',
+        name: 'Problem', // 唯一标识符 类似id
+        component: () => import('@/views/dashboard/Workplace'),
+        meta: { title: 'Problem', keepAlive: true, icon: 'bars' } // FAQ是自己导入的svg文件
+        // children: [
+        //   {
+        //     path: '/dashboard/workplace',
+        //     name: 'Workplace',
+        //     component: () => import('@/views/dashboard/Workplace'),
+        //     meta: { title: 'menu.dashboard.workplace', keepAlive: true, permission: [ 'dashboard' ] }
+        //   }
+        // ]
+      },
+    
+    ]
+  },
+
 
   {
     path: '/404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
-  }
+  },
 
 ]

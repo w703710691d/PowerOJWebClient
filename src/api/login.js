@@ -26,7 +26,7 @@ const userApi = {
  */
 export function login (parameter) {
   return request({
-    url: userApi.Login,
+    url: '/dev/user/login',
     method: 'post',
     data: parameter
   })
@@ -76,5 +76,21 @@ export function get2step (parameter) {
     url: userApi.twoStepCode,
     method: 'post',
     data: parameter
+  })
+}
+
+export function getCaptcha(params){
+  return request({
+    url: '/captcha/get',
+    method:'get',
+    params
+  })
+}
+
+export function getCaptcha111(data1){
+  return request({
+    url: '/getCatptcha',
+    method:'post',
+    data:data1
   })
 }

@@ -4,18 +4,15 @@
       <div class="top">
         <div class="header">
           <a href="/">
-            <img src="~@/assets/logo.svg" class="logo" alt="logo">
-            <span class="title">Ant Design</span>
+            <img src="../../public/logo.png" class="logo" alt="logo">
+            <span class="title">Power oj</span>
           </a>
-        </div>
-        <div class="desc">
-          Ant Design 是西湖区最具影响力的 Web 设计规范
         </div>
       </div>
 
       <router-view />
 
-      <div class="footer">
+      <!-- <div class="footer">
         <div class="links">
           <a href="_self">帮助</a>
           <a href="_self">隐私</a>
@@ -24,7 +21,7 @@
         <div class="copyright">
           Copyright &copy; 2018 vueComponent
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -73,8 +70,8 @@ export default {
         text-align: center;
 
         .header {
-          height: 44px;
-          line-height: 44px;
+          height: 150px;
+          line-height: 150px;
 
           .badge {
             position: absolute;
@@ -87,19 +84,19 @@ export default {
           }
 
           .logo {
-            height: 44px;
-            vertical-align: top;
+            height: 75px;
+            vertical-align: baseline;
             margin-right: 16px;
             border-style: none;
           }
 
           .title {
-            font-size: 33px;
+            font-size: 75px;
             color: rgba(0, 0, 0, .85);
             font-family: Avenir, 'Helvetica Neue', Arial, Helvetica, sans-serif;
             font-weight: 600;
             position: relative;
-            top: 2px;
+            top: 0px;
           }
         }
         .desc {
