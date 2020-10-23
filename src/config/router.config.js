@@ -232,9 +232,9 @@ export const constantRouterMap = [
         component: () => import('@/views/user/RegisterResult')
       },
       {
-        path: 'recover',
-        name: 'recover',
-        component: () => import('@/views/user/recover')
+        path: 'forget',
+        name: 'forget',
+        component: () => import('@/views/user/Forget')
       }
     ]
   },
