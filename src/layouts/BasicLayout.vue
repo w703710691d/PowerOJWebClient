@@ -95,11 +95,15 @@ export default {
   computed: {
     ...mapState({
       // 动态主路由
+      // 修改菜单路由
       mainMenu: state => state.permission.addRouters
     })
   },
   created () {
+    console.log(this.mainMenu)
+    // 路由去掉 404 user
     const routes = this.mainMenu.find(item => item.path === '/')
+    console.log(routes,'你好帅')
     this.menus = (routes && routes.children) || []
     // 处理侧栏收起状态
     this.$watch('collapsed', () => {

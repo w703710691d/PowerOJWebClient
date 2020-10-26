@@ -1,19 +1,25 @@
 <template>
   <div :class="wrpCls">
-    <avatar-dropdown :menu="showMenu" :current-user="currentUser" :class="prefixCls" />
-    <select-lang :class="prefixCls" />
+
+    
+    <!-- <select-lang :class="prefixCls" /> -->
+    <login-component v-if="isLogin"></login-component>
+    <avatar-dropdown v-else :menu="showMenu" :current-user="currentUser" :class="prefixCls" />
   </div>
 </template>
 
 <script>
 import AvatarDropdown from './AvatarDropdown'
 import SelectLang from '@/components/SelectLang'
+import LoginComponent from '@/views/user/index'
+import store from '@/store'
 
 export default {
   name: 'RightContent',
   components: {
     AvatarDropdown,
-    SelectLang
+    SelectLang,
+    LoginComponent
   },
   props: {
     prefixCls: {
@@ -36,7 +42,8 @@ export default {
   data () {
     return {
       showMenu: true,
-      currentUser: {}
+      currentUser: {},
+      isLogin: store.state.user.roles.includes('visitor')
     }
   },
   computed: {
@@ -50,7 +57,7 @@ export default {
   mounted () {
     setTimeout(() => {
       this.currentUser = {
-        name: 'Serati Ma'
+        name: store.state.user.name
       }
     }, 1500)
   }

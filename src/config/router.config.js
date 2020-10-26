@@ -1,5 +1,9 @@
 // eslint-disable-next-line
-import { UserLayout, BasicLayout, BlankLayout } from '@/layouts'
+import {
+  UserLayout,
+  BasicLayout,
+  BlankLayout
+} from '@/layouts'
 // import FAQ from '@/assets/FAQ.svg?inline' // 要加?inline才能显示
 
 // const RouteView = {
@@ -7,21 +11,28 @@ import { UserLayout, BasicLayout, BlankLayout } from '@/layouts'
 //   render: (h) => h('router-view')
 // }
 
+/**
+ * 约定，角色列表有 ['admin','visitor','user'] 后续可以继续加
+ * 在meta里面permission加入上述角色列表，没有则认为所有人都可以看到该页面
+ */
+
 export const asyncRouterMap = [
 
   {
     path: '/',
     name: 'index',
     component: BasicLayout,
-    meta: { title: 'menu.home' },
-    // redirect: '/problem', // 重定向
+    meta: {
+      title: 'menu.home'
+    },
+    redirect: '/problem', // 重定向
     children: [
       // Problem
       {
         path: '/problem',
         name: 'Problem', // 唯一标识符 类似id
         component: () => import('@/views/dashboard/Workplace'),
-        meta: { title: 'Problem', keepAlive: true, icon: 'bars' } // FAQ是自己导入的svg文件
+        meta: { title: 'Problem', keepAlive: true, icon: 'bars', permission:['visitor'] } // FAQ是自己导入的svg文件
         // children: [
         //   {
         //     path: '/dashboard/workplace',
@@ -38,7 +49,11 @@ export const asyncRouterMap = [
         name: 'Status',
         // redirect: '/form/basicForm',
         component: () => import('@/views/form/basicForm'),
-        meta: { title: 'Status', icon: 'check-square' }// permission: [ 'form' ] } 权限问题 form是antd本地的样式文件
+        meta: {
+          title: 'Status',
+          icon: 'check-square',
+          permission:['visitor'] 
+        } // permission: [ 'form' ] } 权限问题 form是antd本地的样式文件
       },
 
       // Contest
@@ -47,7 +62,10 @@ export const asyncRouterMap = [
         name: 'Contest',
         component: () => import('@/views/list/TableList'),
         // redirect: '/list/table-list',
-        meta: { title: 'Contest', icon: 'fire' }
+        meta: {
+          title: 'Contest',
+          icon: 'fire'
+        }
       },
 
       // Ranklist
@@ -56,25 +74,34 @@ export const asyncRouterMap = [
         name: 'Ranklist',
         component: () => import('@/views/profile/basic'),
         // redirect: '/profile/basic',
-        meta: { title: 'Ranklist', icon: 'rise' }
+        meta: {
+          title: 'Ranklist',
+          icon: 'rise'
+        }
       },
 
       // News
       {
         path: '/news',
         name: 'News',
-        component: () => import(/* webpackChunkName: "result" */ '@/views/result/Success'),
+        component: () => import( /* webpackChunkName: "result" */ '@/views/result/Success'),
         // redirect: '/result/success',
-        meta: { title: 'News', icon: 'global' }
+        meta: {
+          title: 'News',
+          icon: 'global'
+        }
       },
 
       // Notice
       {
         path: '/notice',
         name: 'Notice',
-        component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/403'),
+        component: () => import( /* webpackChunkName: "fail" */ '@/views/exception/403'),
         // redirect: '/exception/403',
-        meta: { title: 'Notice', icon: 'exclamation-circle' }
+        meta: {
+          title: 'Notice',
+          icon: 'exclamation-circle'
+        }
       },
 
       // Discuss
@@ -84,7 +111,11 @@ export const asyncRouterMap = [
         // component: RouteView,
         component: () => import('@/views/account/center'),
         // redirect: '/account/center',
-        meta: { title: 'Discuss', icon: 'message', keepAlive: true }
+        meta: {
+          title: 'Discuss',
+          icon: 'message',
+          keepAlive: true
+        }
       },
 
       // F.A.Q
@@ -92,7 +123,11 @@ export const asyncRouterMap = [
         path: '/faq',
         name: 'FAQ',
         component: () => import('@/views/faq/Faq'),
-        meta: { title: 'F.A.Q', icon: 'question-circle', keepAlive: true }
+        meta: {
+          title: 'F.A.Q',
+          icon: 'question-circle',
+          keepAlive: true
+        }
       },
 
       // C Program
@@ -100,7 +135,11 @@ export const asyncRouterMap = [
         path: '/cprogram',
         name: 'CProgram',
         component: () => import('@/views/cprogram/Cprogram'),
-        meta: { title: 'C Program', icon: 'user', keepAlive: true }
+        meta: {
+          title: 'C Program',
+          icon: 'user',
+          keepAlive: true
+        }
       },
 
       // Honor
@@ -108,7 +147,11 @@ export const asyncRouterMap = [
         path: '/honor',
         name: 'Honor',
         component: () => import('@/views/honor/Honor'),
-        meta: { title: 'Honor', icon: 'star', keepAlive: true }
+        meta: {
+          title: 'Honor',
+          icon: 'star',
+          keepAlive: true
+        }
       },
 
       // Download
@@ -116,7 +159,11 @@ export const asyncRouterMap = [
         path: '/download',
         name: 'Download',
         component: () => import('@/views/download/Download'),
-        meta: { title: 'Download', icon: 'download', keepAlive: true }
+        meta: {
+          title: 'Download',
+          icon: 'download',
+          keepAlive: true
+        }
       },
 
       // Achieve
@@ -124,7 +171,11 @@ export const asyncRouterMap = [
         path: '/achieve',
         name: 'Achieve',
         component: () => import('@/views/achieve/Achieve'),
-        meta: { title: 'Achieve', icon: 'crown', keepAlive: true }
+        meta: {
+          title: 'Achieve',
+          icon: 'crown',
+          keepAlive: true
+        }
       },
 
       // Scores
@@ -132,7 +183,11 @@ export const asyncRouterMap = [
         path: '/scores',
         name: 'Scores',
         component: () => import('@/views/scores/Scores-text2'),
-        meta: { title: 'Scores', icon: 'table', keepAlive: true }
+        meta: {
+          title: 'Scores',
+          icon: 'table',
+          keepAlive: true
+        }
       }
 
       // other
@@ -200,7 +255,9 @@ export const asyncRouterMap = [
     ]
   },
   {
-    path: '*', redirect: '/404', hidden: true
+    path: '*',
+    redirect: '/404',
+    hidden: true
   }
 ]
 
@@ -216,11 +273,11 @@ export const constantRouterMap = [
     // redirect: '/user/login',
     hidden: true,
     children: [
-      {
-        path: 'login',
-        name: 'login',
-        component: () => import('@/views/user/Login')
-      },
+      // {
+      //   path: 'login',
+      //   name: 'login',
+      //   component: () => import('@/views/user/Login')
+      // },
       {
         path: 'register',
         name: 'register',
@@ -239,34 +296,8 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/',
-    name: 'index',
-    component: BasicLayout,
-    meta: { title: 'menu.home' },
-    // redirect: '/problem', // 重定向
-    children:[
-      {
-        path: '/problem',
-        name: 'Problem', // 唯一标识符 类似id
-        component: () => import('@/views/dashboard/Workplace'),
-        meta: { title: 'Problem', keepAlive: true, icon: 'bars' } // FAQ是自己导入的svg文件
-        // children: [
-        //   {
-        //     path: '/dashboard/workplace',
-        //     name: 'Workplace',
-        //     component: () => import('@/views/dashboard/Workplace'),
-        //     meta: { title: 'menu.dashboard.workplace', keepAlive: true, permission: [ 'dashboard' ] }
-        //   }
-        // ]
-      },
-    
-    ]
-  },
-
-
-  {
     path: '/404',
-    component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
+    component: () => import( /* webpackChunkName: "fail" */ '@/views/exception/404')
   },
 
 ]
