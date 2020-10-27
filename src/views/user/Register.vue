@@ -1,13 +1,8 @@
 <template>
   <div class="main user-layout-register">
-    <h1>
-      <span class="littletitle">注册</span>
-    </h1>
     <a-form ref="formRegister" :form="form" id="formRegister">
       <a-form-item>
-        <h3>
           <span class="sp">用户名</span>
-        </h3>
         <a-input
           size="large"
           type="text"
@@ -18,9 +13,7 @@
         </a-input>
       </a-form-item>
       <a-form-item>
-        <h3>
           <span class="sp">昵称</span>
-        </h3>
         <a-input
           size="large"
           type="text"
@@ -31,9 +24,7 @@
         </a-input>
       </a-form-item>
       <a-form-item>
-        <h3>
           <span class="sp">电子邮箱</span>
-        </h3>
         <a-input
           size="large"
           type="text"
@@ -67,9 +58,7 @@
           </div>
         </template>
         <a-form-item>
-          <h3>
             <span class="sp">密码</span>
-          </h3>
           <a-input-password
             size="large"
             @click="handlePasswordInputClick"
@@ -82,9 +71,7 @@
       </a-popover>
 
       <a-form-item>
-        <h3>
           <span class="sp">确认密码</span>
-        </h3>
         <a-input-password
           size="large"
           placeholder="确认密码"
@@ -113,9 +100,7 @@
       <a-row :gutter="16">
         <a-col class="gutter-row" :span="16">
           <a-form-item>
-            <h3>
               <span class="sp">验证码</span>
-            </h3>
             <a-input
               size="large"
               type="text"
@@ -388,10 +373,10 @@ export default {
 </style>
 <style lang="less" scoped>
 .user-layout-register {
-  // & > h3 {
-  //   font-size: 16px;
-  //   margin-bottom: 20px;
-  // }
+  & > h3 {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
 
   .getCaptcha {
     display: block;
@@ -407,9 +392,10 @@ export default {
     float: right;
     line-height: 40px;
   }
-}
-.littletitle {
-  display: inline-block;
-  margin-bottom: 6px;
+  .sp {
+    display: inline-block;
+    height: 30px;
+    line-height: 30px;
+  }
 }
 </style>

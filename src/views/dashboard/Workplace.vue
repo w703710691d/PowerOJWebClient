@@ -1,7 +1,12 @@
 <template>
 <div>
-  <a-input-search placeholder="input search text" style="width: 200px" enter-button @search="onSearch" />
+  <a-input-search placeholder="Search or Goto" style="width: 200px" enter-button @search="onSearch" />
+  <div class="pull-right">
+    <span class="badge badge-info">30/32 Pages</span>
+    <span class="badge badge-info">1576 Problems</span>
+  </div>
     <br /><br />
+
   <a-table
     :columns="columns"
     :row-key="record => record.login.uuid"
@@ -21,7 +26,7 @@ const columns = [
     title: 'ID',
     dataIndex: 'ID',
     sorter: true,
-    width: '15%',
+    width: '5%',
   },
   {
     title: 'Title',
@@ -32,28 +37,28 @@ const columns = [
       { text: 'Female', value: 'female' }
     ],
     */
-    width: '15%',
+    width: '20%',
     sorter: (a, b) => a.report.length - b.report.length
   },
   {
     title: 'AC',
     dataIndex: 'AC',
-    width: '15%'
+    width: '5%'
   },
   {
     title: 'Submit',
     dataIndex: 'Submit',
-    width: '15%'
+    width: '5%'
   },
   {
     title: 'Ratio',
     dataIndex: 'Ratio',
-    width: '15%'
+    width: '5%'
   },
   {
     title: 'Date',
     dataIndex: 'Date',
-    width: '15%'
+    width: '20%'
   },
 ]
 
@@ -107,3 +112,32 @@ export default {
   }
 }
 </script>
+<style lang="less" scoped>
+.pull-right {
+    margin-right: 0%;
+    float: right;
+}
+ .badge-info {
+    background-color: #3a87ad;
+}
+.badge {
+    margin-left: 4px;
+    padding-right: 9px;
+    padding-left: 9px;
+    -webkit-border-radius: 9px;
+    -moz-border-radius: 9px;
+    border-radius: 9px;
+}
+ .badge {
+    display: inline-block;
+    padding: 2px 4px;
+    font-size: 11.844px;
+    font-weight: bold;
+    line-height: 14px;
+    color: #fff;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 9px;
+}
+</style>

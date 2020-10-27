@@ -18,7 +18,7 @@
             </a>
         </div>-->
         <a-tab-pane key="tab1" tab="账号密码登录">
-          <router-link class="register" :to="{ name: 'register' }">注册账户</router-link>
+          <!-- <router-link class="register" :to="{ name: 'register' }">注册账户</router-link> -->
 
           <a-alert
             v-if="isLoginError"
@@ -239,10 +239,14 @@ export default {
           //   state.loginBtn = false
           // }
           Login(sendData)
-            .then((res) => this.loginSuccess(res))
+            .then((res) => {
+              this.loginSuccess(res)
+              this.$emit('closeModel')
+            })
             .catch(err =>  {
               console.log(err)
               this.requestFailed(err)
+              this.$emit('closeModel')
             })
             .finally(() => {
               state.loginBtn = false
