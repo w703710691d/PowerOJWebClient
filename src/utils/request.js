@@ -49,7 +49,8 @@ request.interceptors.request.use(config => {
   // if (token) {
   //   config.headers['Access-Token'] = token
   // }
-  // config.headers['Authorization']=12345
+  config.headers['token']="eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI3MjIwMTkwMTI3IiwiZXhwIjoxNjAzOTY0MjY5LCJpYXQiOjE2MDM5NTcwNjksImp0aSI6IjliYzQxNjRkLTgxY2ItNDRjNC04OTI1LWZkZTM5ZGRkNDJkMSIsInVzZXJuYW1lIjoiNzIyMDE5MDEyNyJ9.u2etW6JRpaicSPAlr4FBRhGJlTNGpoyTzIOiWnyTvos"
+	
   return config
 }, errorHandler)
 

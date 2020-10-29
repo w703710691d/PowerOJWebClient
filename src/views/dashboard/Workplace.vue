@@ -1,32 +1,37 @@
 <template>
-<div>
-  <a-input-search placeholder="Search or Goto" style="width: 200px" enter-button @search="onSearch" />
-  <div class="pull-right">
-    <span class="badge badge-info">30/32 Pages</span>
-    <span class="badge badge-info">1576 Problems</span>
+  <div>
+    <a-input-search
+      placeholder="Search or Goto"
+      style="width: 200px"
+      enter-button
+      
+      v-model="text"
+    />
+    <div class="pull-right">
+      <span class="badge badge-info">30/32 Pages</span>
+      <span class="badge badge-info">1576 Problems</span>
+    </div>
+    <br />
+    <br />
+    <a-table
+      :columns="columns"
+      :row-key="record => record.login.uuid"
+      :data-source="data"
+      :pagination="pagination"
+      :loading="loading"
+      @change="handleTableChange"
+    ></a-table>
   </div>
-    <br /><br />
-
-  <a-table
-    :columns="columns"
-    :row-key="record => record.login.uuid"
-    :data-source="data"
-    :pagination="pagination"
-    :loading="loading"
-    @change="handleTableChange"
-  >
-  </a-table>
-</div>
-  
 </template>
 <script>
 import reqwest from 'reqwest'
+import { fetchProblemListData } from '@/api/problem'
 const columns = [
   {
     title: 'ID',
     dataIndex: 'ID',
     sorter: true,
-    width: '5%',
+    width: '5%'
   },
   {
     title: 'Title',
@@ -59,85 +64,89 @@ const columns = [
     title: 'Date',
     dataIndex: 'Date',
     width: '20%'
-  },
+  }
 ]
 
 export default {
-  data () {
+  name:'problem',
+  data() {
     return {
       data: [],
-      pagination: {},
+      pagination: {
+        position: 'bottom'
+      },
       loading: false,
-      columns
+      columns:[],
+      reserchObj:{
+        page: 1,
+        limit: 10,
+        pid:2000,
+        source: undefined
+      },
+      text: undefined
     }
   },
-  mounted () {
-    this.fetch()
+  mounted() {
+    // this.fetch()
+    this.getProblemList()
   },
   methods: {
-    handleTableChange (pagination, filters, sorter) {
-      console.log(pagination)
-      const pager = { ...this.pagination }
-      pager.current = pagination.current
-      this.pagination = pager
-      this.fetch({
-        results: pagination.pageSize,
-        page: pagination.current,
-        sortField: sorter.field,
-        sortOrder: sorter.order,
-        ...filters
-      })
+    async getProblemList() {
+      try {
+          let res = await fetchProblemListData({...this.reserchObj})
+           console.log(res)
+
+          // let pid = '123'
+          // let title = 'biaoti1'
+          // let source = pid || undefined
+          // this.reserchObj = {
+          //   ...this.reserchObj,
+          //   pid,
+          //   title,
+          //   source: this.text
+          // }
+
+      } catch (error) {
+        console.log(error)
+      }
     },
-    fetch (params = {}) {
-      console.log('params:', params)
-      this.loading = true
-      reqwest({
-        url: 'https://randomuser.me/api',
-        method: 'get',
-        data: {
-          results: 10,
-          ...params
-        },
-        type: 'json'
-      }).then(data => {
-        const pagination = { ...this.pagination }
-        // Read total count from server
-        // pagination.total = data.totalCount;
-        pagination.total = 200
-        this.loading = false
-        this.data = data.results
-        this.pagination = pagination
-      })
+    handleTableChange(pagination){
+      this.reserchObj = {
+        ...this.reserchObj,
+        page: pagination.currentPage,
+        limit: pagination.pageSize
+      }
+      this.getProblemList()
     }
   }
 }
 </script>
 <style lang="less" scoped>
 .pull-right {
-    margin-right: 0%;
-    float: right;
+  margin-right: 0%;
+  float: right;
 }
- .badge-info {
-    background-color: #3a87ad;
+.badge-info {
+  background-color: #52c41a;
 }
 .badge {
-    margin-left: 4px;
-    padding-right: 9px;
-    padding-left: 9px;
-    -webkit-border-radius: 9px;
-    -moz-border-radius: 9px;
-    border-radius: 9px;
+  margin-left: 4px;
+  padding-right: 9px;
+  padding-left: 9px;
+  -webkit-border-radius: 9px;
+  -moz-border-radius: 9px;
+  border-radius: 9px;
 }
- .badge {
-    display: inline-block;
-    padding: 2px 4px;
-    font-size: 11.844px;
-    font-weight: bold;
-    line-height: 14px;
-    color: #fff;
-    text-shadow: 0 -1px 0 rgba(0,0,0,0.25);
-    white-space: nowrap;
-    vertical-align: baseline;
-    border-radius: 9px;
+.badge {
+  display: inline-block;
+  padding: 2px 4px;
+  font-size: 11.844px;
+  font-weight: bold;
+  line-height: 14px;
+  color: #fff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 9px;
 }
 </style>
