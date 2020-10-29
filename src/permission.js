@@ -92,6 +92,7 @@ router.beforeEach((to, from, next) => {
 
   // 登录成功
   if (storage.get(ACCESS_TOKEN)) {
+    console.log(store.getters.roles)
     if (store.getters.roles.length === 0) {
       store
         .dispatch('GetInfo')
@@ -139,9 +140,8 @@ router.beforeEach((to, from, next) => {
       next()
     }
 
-    next()
-    NProgress.done()
   } else {
+    // alert(123)
     // 没有赋予游客的角色s
     if (store.getters.roles.length === 0) {
       console.log('第一次进来')

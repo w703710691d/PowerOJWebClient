@@ -1,13 +1,7 @@
 <template>
   <div class="main user-layout-register">
-    <h1>
-      <span class="littletitle">注册</span>
-    </h1>
-    <a-form ref="formRegister" :form="form" id="formRegister">
-      <a-form-item>
-        <h3>
-          <span class="sp">用户名</span>
-        </h3>
+    <a-form ref="formRegister" :form="form" id="formRegister" layout="vertical" :hideRequiredMark="true">
+      <a-form-item label="用户名">
         <a-input
           size="large"
           type="text"
@@ -17,10 +11,7 @@
           <a-icon slot="prefix" type="user" />
         </a-input>
       </a-form-item>
-      <a-form-item>
-        <h3>
-          <span class="sp">昵称</span>
-        </h3>
+      <a-form-item label="昵称">
         <a-input
           size="large"
           type="text"
@@ -30,10 +21,7 @@
           <a-icon slot="prefix" type="smile" />
         </a-input>
       </a-form-item>
-      <a-form-item>
-        <h3>
-          <span class="sp">电子邮箱</span>
-        </h3>
+      <a-form-item label="电子邮箱">
         <a-input
           size="large"
           type="text"
@@ -66,10 +54,7 @@
             </div>
           </div>
         </template>
-        <a-form-item>
-          <h3>
-            <span class="sp">密码</span>
-          </h3>
+        <a-form-item label="密码">
           <a-input-password
             size="large"
             @click="handlePasswordInputClick"
@@ -81,10 +66,7 @@
         </a-form-item>
       </a-popover>
 
-      <a-form-item>
-        <h3>
-          <span class="sp">确认密码</span>
-        </h3>
+      <a-form-item label="确认密码">
         <a-input-password
           size="large"
           placeholder="确认密码"
@@ -112,10 +94,7 @@
 
       <a-row :gutter="16">
         <a-col class="gutter-row" :span="16">
-          <a-form-item>
-            <h3>
-              <span class="sp">验证码</span>
-            </h3>
+          <a-form-item label="验证码">
             <a-input
               size="large"
               type="text"
@@ -126,8 +105,10 @@
             </a-input>
           </a-form-item>
         </a-col>
-        <a-col :span="4">
-          <img :src="imgSrc" alt="验证码" />
+        <a-col class="gutter-row" :span="4">
+           <div>
+             <img :src="imgSrc" alt="验证码" @click="getCaptchaImg" :style="{marginTop:24 +'px'}" />
+           </div>
         </a-col>
         <!-- <a-col class="gutter-row" :span="4">
           <a-button
@@ -150,7 +131,7 @@
           @click.stop.prevent="handleSubmit"
           :disabled="registerBtn"
         >注册</a-button>
-        <router-link class="login" :to="{ name: 'login' }">使用已有账户登录</router-link>
+        <!-- <router-link class="login" :to="{ name: 'login' }">使用已有账户登录</router-link> -->
       </a-form-item>
     </a-form>
   </div>
@@ -388,10 +369,10 @@ export default {
 </style>
 <style lang="less" scoped>
 .user-layout-register {
-  // & > h3 {
-  //   font-size: 16px;
-  //   margin-bottom: 20px;
-  // }
+  & > h3 {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
 
   .getCaptcha {
     display: block;
@@ -399,17 +380,18 @@ export default {
     height: 40px;
   }
 
-  .register-button {
-    width: 50%;
-  }
+  // .register-button {
+  //   // width: 50%;
+  // }
 
   .login {
     float: right;
     line-height: 40px;
   }
-}
-.littletitle {
-  display: inline-block;
-  margin-bottom: 6px;
+  .sp {
+    display: inline-block;
+    height: 30px;
+    line-height: 30px;
+  }
 }
 </style>

@@ -29,13 +29,13 @@ const errorHandler = (error) => {
         message: 'Unauthorized',
         description: 'Authorization verification failed'
       })
-      if (token) {
-        store.dispatch('Logout').then(() => {
-          setTimeout(() => {
-            window.location.reload()
-          }, 1500)
-        })
-      }
+      // if (token) {
+      //   store.dispatch('Logout').then(() => {
+      //     setTimeout(() => {
+      //       window.location.reload()
+      //     }, 1500)
+      //   })
+      // }
     }
   }
   return Promise.reject(error)
@@ -46,16 +46,38 @@ request.interceptors.request.use(config => {
   const token = storage.get(ACCESS_TOKEN)
   // 如果 token 存在
   // 让每个请求携带自定义 token 请根据实际情况自行修改
-  // if (token) {
-  //   config.headers['Access-Token'] = token
-  // }
-  // config.headers['Authorization']=12345
+  if (token) {
+    config.headers['Authorization'] = "12345"
+  }
+  config.headers['Authorization'] = "12345"
   return config
 }, errorHandler)
 
 // response interceptor
 request.interceptors.response.use((response) => {
-  return response.data
+  const res = response.data;
+  if (response.config.responseType === 'blob') {
+    return res;
+  }
+  if (Number(res.code) !== 200 && Number(res.code) !== 0) {
+    console.log(res)
+    notification.error({
+      message:res.message||res.msg  || 'Error'
+    })
+    // if (Number(res.code) === 401) {
+    //   store.dispatch('Logout').then(() => {
+    //     setTimeout(() => {
+    //       window.location.reload()
+    //     }, 1500)
+    //   })
+    // }
+    // if (Number(res.code) === 600) {
+    //   return Promise.reject(new Error(res.msg || res.message || 'Error'))
+    // }
+  } else {
+    return res
+  }
+  return Promise.reject(new Error(res.msg || res.message || 'Error'))
 }, errorHandler)
 
 const installer = {
