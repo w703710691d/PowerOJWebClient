@@ -96,7 +96,7 @@
           </a-form-item>
         </a-col>
         <a-col :span="4">
-          <img :src="imgSrc" alt="验证码" />
+          <img :src="imgSrc" alt="验证码" @click="getCaptchaImg" />
         </a-col>
       </a-row>
 
