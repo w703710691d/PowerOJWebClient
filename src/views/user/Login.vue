@@ -1,20 +1,20 @@
 <template>
   <div class="main">
     <a-form id="formLogin" class="user-layout-login" ref="formLogin" :form="form">
-      <a-tabs
+      <!-- <a-tabs
         :activeKey="customActiveKey"
         :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"
         @change="handleTabClick"
-      >
+      > -->
         <!-- <div class="user-login-other">
             <a >
               <router-link  class="register" :to="{ name: 'register' }">注册账户</router-link>
             </a>
         </div>-->
-        <a-tab-pane key="tab1" tab="账号密码登录">
+        <!-- <a-tab-pane key="tab1" tab="账号密码登录"> -->
           <!-- <router-link class="register" :to="{ name: 'register' }">注册账户</router-link> -->
 
-          <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px" message="账户或密码错误" />
+          <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px" :message="errMessage" />
           <a-form-item>
             <a-input
               size="large"
@@ -44,8 +44,8 @@
               <a-icon slot="prefix" type="lock" />
             </a-input-password>
           </a-form-item>
-        </a-tab-pane>
-      </a-tabs>
+        <!-- </a-tab-pane> -->
+      <!-- </a-tabs> -->
 
       <a-row :gutter="16">
         <a-col class="gutter-row" :span="16">
@@ -142,6 +142,7 @@ export default {
         smsSendBtn: false,
       },
       verKey: undefined,
+      errMessage: undefined
     }
   },
   created() {
@@ -156,8 +157,6 @@ export default {
   },
   mounted() {
     this.getCaptchaImg()
-    console.log(this.$router)
-    console.log(this.$route)
   },
   methods: {
     ...mapActions(['Login', 'Logout']),
@@ -206,8 +205,9 @@ export default {
             })
             .catch((err) => {
               console.log(err)
-              this.requestFailed(err)
-              this.$emit('closeModel')
+              this.isLoginError = true
+              this.errMessage = err.message
+              // this.requestFailed(err)
             })
             .finally(() => {
               state.loginBtn = false
@@ -249,12 +249,13 @@ export default {
     loginSuccess(res) {
       console.log(res)
       store.dispatch('GetInfo').then((res) => {
-        const roles = res.result && res.result.role
+        const roles = res.listRole.map(item=>item.name)
         store
           .dispatch('GenerateRoutes', {
             roles,
           })
           .then(() => {
+            window.location.reload()
             router.addRoutes(store.getters.addRouters)
             this.$notification.success({
               message: '欢迎',

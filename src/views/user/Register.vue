@@ -380,9 +380,9 @@ export default {
     height: 40px;
   }
 
-  // .register-button {
-  //   // width: 50%;
-  // }
+  .register-button {
+    width: 100%;
+  }
 
   .login {
     float: right;

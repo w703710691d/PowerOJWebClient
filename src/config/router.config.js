@@ -12,7 +12,7 @@ import {
 // }
 
 /**
- * 约定，角色列表有 ['admin','visitor','user'] 后续可以继续加
+ * 约定，角色列表有 ['root','admin','member','teacher','teacher_theory','teacher_exper','user','user'] 后续可以继续加
  * 在meta里面permission加入上述角色列表，没有则认为所有人都可以看到该页面
  */
 
@@ -27,12 +27,19 @@ export const asyncRouterMap = [
     },
     redirect: '/problem', // 重定向
     children: [
+      {
+        path:'',
+        name: 'HomePage',
+        component: ()=>import('@/views/dashboard/Analysis'),
+        hidden: true,
+        meta: { title: 'Problem12222', keepAlive: true, icon: 'bars' }
+      },
       // Problem
       {
         path: '/problem',
         name: 'Problem', // 唯一标识符 类似id
         component: () => import('@/views/dashboard/Workplace'),
-        meta: { title: 'Problem', keepAlive: true, icon: 'bars', permission:['visitor'] } // FAQ是自己导入的svg文件
+        meta: { title: 'Problem', keepAlive: true, icon: 'bars' } // FAQ是自己导入的svg文件
         // children: [
         //   {
         //     path: '/dashboard/workplace',
