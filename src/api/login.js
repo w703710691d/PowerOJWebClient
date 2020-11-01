@@ -42,7 +42,7 @@ export function getSmsCaptcha (parameter) {
 
 export function getInfo () {
   return request({
-    url: userApi.UserInfo,
+    url: '/dev/user/getUserInfo',
     method: 'get',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'

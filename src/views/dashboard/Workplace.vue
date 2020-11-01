@@ -6,17 +6,17 @@
       class="input-medium search-query"
       v-model="text"
     />
-    <select name="scope" class="input-small">
-      <option value>All</option>
-      <option value="title" selected>Title</option>
-      <option value="source">Source</option>
-      <option value="tag">Tag</option>
-      <option value="content">Content</option>
-    </select>
-    <button type="submit" class="btn btn-info">Search</button>
+    <a-select name="scope" class="input-small" @change="handleChangeInSelected" :allowClear="true">
+      <!-- <a-select-option value>All</a-select-option> -->
+      <a-select-option value="title" selected>Title</a-select-option>
+      <a-select-option value="source">Source</a-select-option>
+      <a-select-option value="pid">Id</a-select-option>
+      <a-select-option value="content">Content</a-select-option>
+    </a-select>
+    <button type="submit" class="btn btn-info" @click="handleSearch">Search</button>
     <div class="pull-right">
-      <span class="badge badge-info">30/32 Pages</span>
-      <span class="badge badge-info">1576 Problems</span>
+      <span class="badge badge-info">{{pagination.current}}/{{totalPage}} Pages</span>
+      <span class="badge badge-info">{{pagination.total}} Problems</span>
     </div>
     <br />
     <br />
@@ -28,10 +28,9 @@
       :loading="loading"
       @change="handleTableChange"
     >
-       <template slot="title1" slot-scope="text, record">
-        <div v-html="record.title">
-        </div>
-      </template> 
+      <template slot="title1" slot-scope="text, record">
+        <div v-html="record.title"></div>
+      </template>
       <template slot="ratio" slot-scope="text,record">
         <a-statistic :value="(record.accepted/record.submission) *100" :precision="2" suffix="%"></a-statistic>
       </template>
@@ -39,7 +38,6 @@
   </a-card>
 </template>
 <script>
-import reqwest from 'reqwest'
 import { fetchProblemListData } from '@/api/problem'
 
 const columns = [
@@ -47,39 +45,39 @@ const columns = [
     title: 'ID',
     dataIndex: 'pid',
     width: '10%',
-    sorter: (a, b) => a.pid - b.pid,
+    sorter: (a, b) => a.pid - b.pid
   },
   {
     title: 'Title',
     dataIndex: 'title1',
     width: '40%',
-    sorter: (a, b) => a.title.length-b.title.length,
+    sorter: (a, b) => a.title.length - b.title.length,
     scopedSlots: { customRender: 'title1' }
   },
   {
     title: 'AC',
     dataIndex: 'accepted',
     width: '10%',
-    sorter: (a, b) => a.accepted - b.accepted,
+    sorter: (a, b) => a.accepted - b.accepted
   },
   {
     title: 'Submit',
     dataIndex: 'submission',
     width: '10%',
-    sorter: (a, b) => a.submission - b.submission,
+    sorter: (a, b) => a.submission - b.submission
   },
   {
     title: 'Ratio',
     dataIndex: 'ratio',
     width: '10%',
     scopedSlots: { customRender: 'ratio' },
-    sorter: (a, b) => a.ratio - b.ratio,
+    sorter: (a, b) => a.ratio - b.ratio
   },
   {
     title: 'Date',
     dataIndex: 'ctime',
     width: '20%',
-    sorter: (a, b) => (new Date(a.ctime)).getTime() -  (new Date(b.ctime)).getTime(),
+    sorter: (a, b) => new Date(a.ctime).getTime() - new Date(b.ctime).getTime()
   }
 ]
 export default {
@@ -89,16 +87,23 @@ export default {
       columns,
       data: [],
       pagination: {
-        position: 'bottom'
+        position: 'bottom',
+        current:1,
+        pageSize:10,
+        total:1
       },
       loading: false,
       reserchObj: {
         page: 1,
-        limit: 10,
-        pid: 2000,
-        source: undefined
+        limit: 10
+        // pid:undefined,
+        // source:undefined,
+        // title:undefined
       },
-      text: undefined
+      text: undefined,
+      selected: undefined,
+      totalPage: 1
+
     }
   },
   mounted() {
@@ -108,27 +113,35 @@ export default {
   methods: {
     async getProblemList() {
       try {
+        this.loading = true
         let res = await fetchProblemListData({ ...this.reserchObj })
         console.log(res)
-        let pagination = { ...this.pagination }
+        let pagination = {
+          ...this.pagination,
+          current: this.reserchObj.page,
+          pageSize: this.reserchObj.limit
+        }
         pagination.total = res.data.total
-        this.data = res.data.queryList.map(item=>({
+        this.totalPage=res.data.pages
+        this.data = res.data.records.map(item => ({
           ...item,
-          ratio: (item.accepted/item.submission).toFixed(2)
+          ratio: (item.accepted / item.submission).toFixed(2)
         }))
         this.pagination = pagination
+        this.loading = false
 
-        // let pid = '123'
-        // let title = 'biaoti1'
+        // let pid = undefined
+        // let title = undefined
         // let source =  undefined
         // this.reserchObj = {
         //   ...this.reserchObj,
-        //   pid,
-        //   title,
+        //   pid: this.text,
+        //   title: this.text,
         //   source: this.text
         // }
       } catch (error) {
         console.log(error)
+        this.loading = false
       }
     },
     handleTableChange(pagination) {
@@ -137,6 +150,15 @@ export default {
         page: pagination.current,
         limit: pagination.pageSize
       }
+      this.getProblemList()
+    },
+    handleChangeInSelected(value) {
+      this.selected = value
+    },
+    handleSearch() {
+      let obj = { page: 1, limit: 10 }
+      if (this.selected) obj[this.selected] = this.text
+      this.reserchObj = { ...obj }
       this.getProblemList()
     }
   }

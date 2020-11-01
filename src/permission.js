@@ -92,11 +92,12 @@ router.beforeEach((to, from, next) => {
 
   // 登录成功
   if (storage.get(ACCESS_TOKEN)) {
+    console.log(store.getters.roles)
     if (store.getters.roles.length === 0) {
       store
         .dispatch('GetInfo')
         .then(res => {
-          const roles = res.result && res.result.role
+           const roles = res.listRole.map(item=>item.name)
           // generate dynamic router
           store.dispatch('GenerateRoutes', {
             roles
@@ -140,6 +141,7 @@ router.beforeEach((to, from, next) => {
     }
 
   } else {
+    // alert(123)
     // 没有赋予游客的角色s
     if (store.getters.roles.length === 0) {
       console.log('第一次进来')

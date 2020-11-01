@@ -3,7 +3,7 @@
 
     
     <!-- <select-lang :class="prefixCls" /> -->
-    <login-component v-if="isLogin"></login-component>
+    <login-component v-if="roles.includes('visitor')"></login-component>
     <avatar-dropdown v-else :menu="showMenu" :current-user="currentUser" :class="prefixCls" />
   </div>
 </template>
@@ -43,7 +43,7 @@ export default {
     return {
       showMenu: true,
       currentUser: {},
-      isLogin: store.state.user.roles.includes('visitor')
+      roles: store.state.user.roles
     }
   },
   computed: {
