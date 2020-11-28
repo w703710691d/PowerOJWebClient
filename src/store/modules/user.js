@@ -1,8 +1,8 @@
 import storage from 'store'
-import { login, getInfo, logout, getGuestToken } from '@/api/login'
+import { getInfo,  } from '@/api/login'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
-import permission from './permission'
+import { getGuestTokenRequest, loginRequest, logoutRequest, getUserRolesAndPermissionsRequest } from '@/api/user'
 
 const user = {
   state: {
@@ -39,9 +39,9 @@ const user = {
 
   actions: {
     // 登录
-    Login ({ commit }, userInfo) {
+    loginAction ({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
-        login(userInfo).then(response => {
+        loginRequest(userInfo).then(response => {
           console.log(response)
           const result = response.data
           storage.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
@@ -53,9 +53,9 @@ const user = {
       })
     },
 
-    GetGuestToken ({ commit }) {
+    getGuestTokenAction ({ commit }) {
       return new Promise((resolve, reject) => {
-        getGuestToken().then(response => {
+        getGuestTokenRequest().then(response => {
           const result = response.data
           storage.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
           commit('SET_TOKEN', result.token)
@@ -67,40 +67,16 @@ const user = {
     },
 
 // 获取用户信息
-    GetInfo ({ commit }) {
+    getUserRolesAndPermissionsAction ({ commit }) {
       return new Promise((resolve, reject) => {
-        getInfo().then(response => {
+        getUserRolesAndPermissionsRequest().then(response => {
           const userData = response.data
-          if (userData.listRole && userData.listRole.length) {
-            const role = userData.listRole.map(item => item.name)
-            commit('SET_ROLES', role)
-            commit('SET_PERMISSION_LIST', userData.listPer)
-            commit('SET_INFO', userData.user)
+          if (userData.roles && userData.permissions) {
+            commit('SET_ROLES', userData.roles)
+            commit('SET_PERMISSION_LIST', userData.permissions)
           } else {
             reject(new Error('获取用户权限列表失败！'))
           }
-
-          // const result = response.result
-
-          // if (result.role && result.role.permissions.length > 0) {
-          //   const role = result.role
-          //   role.permissions = result.role.permissions
-          //   role.permissions.map(per => {
-          //     if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
-          //       const action = per.actionEntitySet.map(action => { return action.action })
-          //       per.actionList = action
-          //     }
-          //   })
-
-          //   role.permissionList = role.permissions.map(permission => { return permission.permissionId })
-          //   commit('SET_ROLES', result.role)
-          //   commit('SET_INFO', result)
-          // } else {
-          //   reject(new Error('getInfo: roles must be a non-null array !'))
-          // }
-
-          commit('SET_NAME', { name: userData.user.nick, welcome: welcome() })
-
           resolve(response.data)
         }).catch(error => {
           reject(error)
@@ -109,9 +85,9 @@ const user = {
     },
 
 // 登出
-    Logout ({ commit, state }) {
+    logoutAction ({ commit, state }) {
       return new Promise((resolve) => {
-        logout(state.token).then(() => {
+        logoutRequest(state.token).then(() => {
           resolve()
         }).catch(() => {
           resolve()

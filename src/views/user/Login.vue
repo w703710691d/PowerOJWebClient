@@ -20,13 +20,9 @@
           size="large"
           type="text"
           placeholder="账户: "
-          v-decorator="[
-            'username',
-              {
-                rules: [{ required: true, message: '请输入帐户名或邮箱地址' }, { validator: handleUsernameOrEmail }],
-                validateTrigger: 'change',
-              },
-            ]"
+          v-decorator="['username', {
+            rules: [{ required: true, message: '请输入帐户名或邮箱地址' }, { validator: handleUsernameOrEmail }],
+            validateTrigger: 'change'}]"
         >
           <a-icon slot="prefix" type="user" />
         </a-input>
@@ -36,10 +32,9 @@
         <a-input-password
           size="large"
           placeholder="密码: "
-          v-decorator="[
-                'password',
-                { rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur' },
-              ]"
+          v-decorator="['password', {
+            rules: [{ required: true, message: '请输入密码' }],
+            validateTrigger: 'blur'}]"
         >
           <a-icon slot="prefix" type="lock" />
         </a-input-password>
@@ -54,10 +49,9 @@
               size="large"
               type="text"
               placeholder="验证码"
-              v-decorator="[
-                'captcha',
-                { rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur' },
-              ]"
+              v-decorator="['captcha', {
+                rules: [{ required: true, message: '请输入验证码' }],
+                validateTrigger: 'blur' }]"
             >
               <a-icon slot="prefix" type="mail" />
             </a-input>
@@ -70,7 +64,7 @@
 
       <a-form-item>
         <a-checkbox v-decorator="['rememberMe', { valuePropName: 'checked' }]">自动登录</a-checkbox>
-        <router-link :to="{ name: 'forget' }" class="forge-password" style="float: right">忘记密码</router-link>
+        <router-link :to="{name: 'forget'}" class="forge-password" style="float: right">忘记密码</router-link>
       </a-form-item>
 
       <a-form-item style="margin-top: 24px">
@@ -82,8 +76,7 @@
           :disabled="state.loginBtn"
           @click="handleSubmit"
         >确定
-        </a-button
-        >
+        </a-button>
       </a-form-item>
 
       <!-- <div class="user-login-other">
@@ -115,7 +108,7 @@ import md5 from 'md5'
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
-import { getSmsCaptcha, get2step, getCaptcha } from '@/api/login'
+import { get2step, getCaptcha } from '@/api/login'
 import store from '@/store'
 import router from '@/router'
 
@@ -160,7 +153,7 @@ export default {
     this.getCaptchaImg()
   },
   methods: {
-    ...mapActions(['Login', 'Logout']),
+    ...mapActions(['loginAction', 'logoutAction']),
     // handler
     handleUsernameOrEmail (rule, value, callback) {
       const { state } = this
@@ -182,7 +175,7 @@ export default {
         form: { validateFields },
         state,
         customActiveKey,
-        Login
+        loginAction
       } = this
 
       state.loginBtn = true
@@ -193,13 +186,13 @@ export default {
         if (!err) {
           console.log('login form', values)
 
-          let sendData = {
+          const sendData = {
             name: values.username,
             password: values.password,
             code: values.captcha,
             verKey: this.verKey
           }
-          Login(sendData)
+          loginAction(sendData)
             .then((res) => {
               this.loginSuccess(res)
               this.$emit('closeModel')
@@ -222,7 +215,7 @@ export default {
     },
     async getCaptchaImg () {
       try {
-        let res = await getCaptcha()
+        const res = await getCaptcha()
         console.log(res)
         this.imgSrc = res.data.base64
         this.verKey = res.data.verKey
@@ -242,14 +235,14 @@ export default {
       this.loginSuccess()
     },
     stepCaptchaCancel () {
-      this.Logout().then(() => {
+      this.logoutAction().then(() => {
         this.loginBtn = false
         this.stepCaptchaVisible = false
       })
     },
     loginSuccess (res) {
       console.log(res)
-      store.dispatch('GetInfo').then((res) => {
+      store.dispatch('getUserRolesAndPermissionsAction').then((res) => {
         const roles = res.listRole.map(item => item.name)
         store
           .dispatch('GenerateRoutes', {
