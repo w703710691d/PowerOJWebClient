@@ -1,9 +1,7 @@
 <template>
   <div :class="wrpCls">
-
-    
     <!-- <select-lang :class="prefixCls" /> -->
-    <login-component v-if="roles.includes('visitor')"></login-component>
+    <login-component v-if="roles.includes('guest')"></login-component>
     <avatar-dropdown v-else :menu="showMenu" :current-user="currentUser" :class="prefixCls" />
   </div>
 </template>

@@ -33,11 +33,11 @@ export default {
     }
   },
   methods: {
-    toggleStatus(status){
+    toggleStatus (status) {
       this.status = status
       this.visible = true
     },
-    closeModal(){
+    closeModal () {
       this.visible = false
     }
   }

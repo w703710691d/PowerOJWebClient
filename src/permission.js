@@ -14,6 +14,7 @@ import {
 import {
   i18nRender
 } from '@/locales'
+import { getGuestToken } from '@/api/login'
 
 NProgress.configure({
   showSpinner: false
@@ -27,69 +28,6 @@ const HomePage = '/problem'
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
   to.meta && (typeof to.meta.title !== 'undefined' && setDocumentTitle(`${i18nRender(to.meta.title)} - ${domTitle}`))
-
-  // next({ path: defaultRoutePath })
-  // next({ path: loginRoutePath })
-  /* has token */
-  // if (storage.get(ACCESS_TOKEN)) {
-  //   if (to.path === loginRoutePath) {
-  //     next({ path: defaultRoutePath })
-  //     NProgress.done()
-  //   }
-  //   else {
-  //     // check login user.roles is null
-  //     if (store.getters.roles.length === 0) {
-  //       // request login userInfo
-  //       store
-  //         .dispatch('GetInfo')
-  //         .then(res => {
-  //           const roles = res.result && res.result.role
-  //           // generate dynamic router
-  //           store.dispatch('GenerateRoutes', { roles }).then(() => {
-  //             // 根据roles权限生成可访问的路由表
-  //             // 动态添加可访问路由表
-  //             router.addRoutes(store.getters.addRouters)
-  //             // 请求带有 redirect 重定向时，登录自动重定向到该地址
-  //             const redirect = decodeURIComponent(from.query.redirect || to.path)
-  //             if (to.path === redirect) {
-  //               // set the replace: true so the navigation will not leave a history record
-  //               next({ ...to, replace: true })
-  //             } else {
-  //               // 跳转到目的路由
-  //               next({ path: redirect })
-  //             }
-  //           })
-  //         })
-  //         .catch(() => {
-  //           notification.error({
-  //             message: '错误',
-  //             description: '请求用户信息失败，请重试'
-  //           })
-  //           // 失败时，获取用户信息失败时，调用登出，来清空历史保留信息
-  //           store.dispatch('Logout').then(() => {
-  //             next({ path: loginRoutePath, query: { redirect: to.fullPath } })
-  //           })
-  //         })
-  //     } else {
-  //       next()
-  //     }
-  //   }
-  // } else {
-  //   if (allowList.includes(to.name)) {
-  //     // 在免登录名单，直接进入
-  //     next()
-  //   } else {
-  //     next({ 
-  //       path: loginRoutePath, 
-  //       query: { redirect: to.fullPath } 
-  //     })
-  //     next()
-
-  //     NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
-  //   }
-  // }
-
-
   // 登录成功
   if (storage.get(ACCESS_TOKEN)) {
     console.log(store.getters.roles)
@@ -97,7 +35,7 @@ router.beforeEach((to, from, next) => {
       store
         .dispatch('GetInfo')
         .then(res => {
-           const roles = res.listRole.map(item=>item.name)
+          const roles = res.listRole.map(item => item.name)
           // generate dynamic router
           store.dispatch('GenerateRoutes', {
             roles
@@ -139,39 +77,25 @@ router.beforeEach((to, from, next) => {
     } else {
       next()
     }
-
   } else {
-    // alert(123)
-    // 没有赋予游客的角色s
-    if (store.getters.roles.length === 0) {
-      console.log('第一次进来')
-      store.commit('SET_ROLES', ['visitor'])
-      store.dispatch('GenerateRoutes', {
-          roles: ['visitor']
+    store.dispatch('GetGuestToken').then(res => {
+      router.addRoutes(store.getters.addRouters)
+      // 请求带有 redirect 重定向时，登录自动重定向到该地址
+      const redirect = decodeURIComponent(from.query.redirect || to.path)
+      if (to.path === redirect) {
+        // set the replace: true so the navigation will not leave a history record
+        next({
+          ...to,
+          replace: true
         })
-        .then(() => {
-          router.addRoutes(store.getters.addRouters)
-          // 请求带有 redirect 重定向时，登录自动重定向到该地址
-          const redirect = decodeURIComponent(from.query.redirect || to.path)
-          if (to.path === redirect) {
-            // set the replace: true so the navigation will not leave a history record
-            next({
-              ...to,
-              replace: true
-            })
-          } else {
-            // 跳转到目的路由
-            next({
-              path: redirect
-            })
-          }
+      } else {
+        // 跳转到目的路由
+        next({
+          path: redirect
         })
-    } else {
-      console.log('第二次进来')
-      next()
-    }
+      }
+    })
   }
-
 })
 
 router.afterEach(() => {

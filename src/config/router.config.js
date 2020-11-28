@@ -28,11 +28,11 @@ export const asyncRouterMap = [
     redirect: '/problem', // 重定向
     children: [
       {
-        path:'',
+        path: '',
         name: 'HomePage',
-        component: ()=>import('@/views/dashboard/Analysis'),
+        component: () => import('@/views/dashboard/Analysis'),
         hidden: true,
-        meta: { title: 'Problem12222', keepAlive: true, icon: 'bars' }
+        meta: { title: 'Problem', keepAlive: true, icon: 'bars' }
       },
       // Problem
       {
@@ -59,7 +59,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'Status',
           icon: 'check-square',
-          permission:['visitor'] 
+          permission: ['visitor']
         } // permission: [ 'form' ] } 权限问题 form是antd本地的样式文件
       },
 
@@ -91,7 +91,7 @@ export const asyncRouterMap = [
       {
         path: '/news',
         name: 'News',
-        component: () => import( /* webpackChunkName: "result" */ '@/views/result/Success'),
+        component: () => import(/* webpackChunkName: "result" */ '@/views/result/Success'),
         // redirect: '/result/success',
         meta: {
           title: 'News',
@@ -103,7 +103,7 @@ export const asyncRouterMap = [
       {
         path: '/notice',
         name: 'Notice',
-        component: () => import( /* webpackChunkName: "fail" */ '@/views/exception/403'),
+        component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/403'),
         // redirect: '/exception/403',
         meta: {
           title: 'Notice',
@@ -304,7 +304,6 @@ export const constantRouterMap = [
   },
   {
     path: '/404',
-    component: () => import( /* webpackChunkName: "fail" */ '@/views/exception/404')
-  },
-
+    component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
+  }
 ]

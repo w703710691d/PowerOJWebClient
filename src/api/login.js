@@ -1,7 +1,8 @@
 import request from '@/utils/request'
 
 const userApi = {
-  Login: '/auth/login',
+  Login: '/api/user/login',
+  GetGuestToken: '/api/user/getGuestToken',
   Logout: '/auth/logout',
   ForgePassword: '/auth/forge-password',
   Register: '/auth/register',
@@ -26,9 +27,16 @@ const userApi = {
  */
 export function login (parameter) {
   return request({
-    url: '/dev/user/login',
+    url: userApi.Login,
     method: 'post',
     data: parameter
+  })
+}
+
+export function getGuestToken () {
+  return request({
+    url: userApi.GetGuestToken,
+    method: 'get'
   })
 }
 
@@ -42,7 +50,7 @@ export function getSmsCaptcha (parameter) {
 
 export function getInfo () {
   return request({
-    url: '/dev/user/getUserInfo',
+    url: '/api/user/getUserInfo',
     method: 'get',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
@@ -79,18 +87,18 @@ export function get2step (parameter) {
   })
 }
 
-export function getCaptcha(params){
+export function getCaptcha (params) {
   return request({
     url: '/captcha/get',
-    method:'get',
+    method: 'get',
     params
   })
 }
 
-export function getCaptcha111(data1){
+export function getCaptcha111 (data1) {
   return request({
     url: '/getCatptcha',
-    method:'post',
-    data:data1
+    method: 'post',
+    data: data1
   })
 }
