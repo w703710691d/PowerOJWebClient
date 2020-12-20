@@ -55,3 +55,15 @@ export function getCaptcha111 (data1) {
     data: data1
   })
 }
+
+/**
+ * 阳哥没写，也不知道干嘛用的，随便写的，以后再改s
+ * @param {*} data 
+ */
+export function getSmsCaptcha(data){
+  return request({
+    url:'/getSmsCaptcha',
+    method:'post',
+    data
+  })
+}

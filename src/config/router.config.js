@@ -102,33 +102,35 @@ export const asyncRouterMap = [
 
       // Notice
       {
-        path: '/notice',
+        path:'/notice',
         name: 'Notice',
-        component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/403'),
-        // redirect: '/exception/403',
-        meta: {
+        component: RouteView,
+        meta:{
           title: 'Notice',
           icon: 'exclamation-circle'
         },
+        hideChildrenInMenu: true,
+        redirect:'/notice',
         children:[
           {
-            component: () => import( /* webpackChunkName: "fail" */ '@/views/exception/notice'),
+            component: () => import( '@/views/exception/notice'),
             path:'/notice',
             name:'notice',
-            // hidden:true,
             meta:{
-              title:'Notice'
+              hidden: true
             }
           },
           {
             hidden:true,
             path: '/notice/addnotice',
             name: 'addnotice',
-            component: () => import('@/views/exception/addnotice')
+            component: () => import('@/views/exception/addnotice'),
+            meta:{
+              hidden:true
+            }
           }
         ]
       },
-
       // Discuss
       {
         path: '/discuss',

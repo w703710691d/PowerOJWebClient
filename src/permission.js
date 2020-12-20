@@ -45,13 +45,11 @@ router.beforeEach((to, from, next) => {
             // 请求带有 redirect 重定向时，登录自动重定向到该地址
             const redirect = decodeURIComponent(from.query.redirect || to.path)
             if (to.path === redirect) {
-              // set the replace: true so the navigation will not leave a history record
               next({
                 ...to,
                 replace: true
               })
             } else {
-              // 跳转到目的路由
               next({
                 path: redirect
               })
@@ -77,22 +75,31 @@ router.beforeEach((to, from, next) => {
       next()
     }
   } else {
-    store.dispatch('getGuestTokenAction').then(res => {
-      router.addRoutes(store.getters.addRouters)
-      // 请求带有 redirect 重定向时，登录自动重定向到该地址
-      const redirect = decodeURIComponent(from.query.redirect || to.path)
-      if (to.path === redirect) {
-        // set the replace: true so the navigation will not leave a history record
-        next({
-          ...to,
-          replace: true
+    if (store.getters.roles.length === 0) {
+      store.commit('SET_ROLES', ['visitor'])
+      store.dispatch('GenerateRoutes', {
+          roles: ['visitor']
         })
-      } else {
-        // 跳转到目的路由
-        next({
-          path: redirect
+        .then(() => {
+          router.addRoutes(store.getters.addRouters)
+          const redirect = decodeURIComponent(from.query.redirect || to.path)
+          if (to.path === redirect) {
+            next({
+              ...to,
+              replace: true
+            })
+          } else {
+            // 跳转到目的路由
+            next({
+              path: redirect
+            })
+          }
         })
-      }
+    } else {
+      next()
+    }
+    store.dispatch('getGuestTokenAction').catch(err=>{
+      console.log(err)
     })
   }
 })

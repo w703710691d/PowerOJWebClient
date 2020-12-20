@@ -47,6 +47,9 @@ export default {
     onSubmit() {
       console.log('submit!', this.form);
     },
+    onChange(){
+      console.log('测试')
+    }
   },
 };
 </script>
