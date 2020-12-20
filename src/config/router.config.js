@@ -4,6 +4,9 @@ import {
   BasicLayout,
   BlankLayout
 } from '@/layouts'
+import {
+  RouteView, PageView
+} from '@/layouts/index'
 // import FAQ from '@/assets/FAQ.svg?inline' // 要加?inline才能显示
 
 // const RouteView = {
@@ -26,20 +29,27 @@ export const asyncRouterMap = [
       title: 'menu.home'
     },
     redirect: '/problem', // 重定向
-    children: [
-      {
-        path:'',
+    children: [{
+        path: '',
         name: 'HomePage',
-        component: ()=>import('@/views/dashboard/Analysis'),
+        component: () => import('@/views/dashboard/Analysis'),
         hidden: true,
-        meta: { title: 'Problem12222', keepAlive: true, icon: 'bars' }
+        meta: {
+          title: 'Problem12222',
+          keepAlive: true,
+          icon: 'bars'
+        }
       },
       // Problem
       {
         path: '/problem',
         name: 'Problem', // 唯一标识符 类似id
         component: () => import('@/views/dashboard/Workplace'),
-        meta: { title: 'Problem', keepAlive: true, icon: 'bars' } // FAQ是自己导入的svg文件
+        meta: {
+          title: 'Problem',
+          keepAlive: true,
+          icon: 'bars'
+        } // FAQ是自己导入的svg文件
         // children: [
         //   {
         //     path: '/dashboard/workplace',
@@ -59,7 +69,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'Status',
           icon: 'check-square',
-          permission:['visitor'] 
+          permission: ['visitor']
         } // permission: [ 'form' ] } 权限问题 form是antd本地的样式文件
       },
 
@@ -129,12 +139,32 @@ export const asyncRouterMap = [
       {
         path: '/faq',
         name: 'FAQ',
-        component: () => import('@/views/faq/Faq'),
+        component: RouteView,
         meta: {
           title: 'F.A.Q',
           icon: 'question-circle',
           keepAlive: true
-        }
+        },
+        hideChildrenInMenu: true,
+        redirect:'/faq',
+        children: [
+          {
+            component: () => import('@/views/faq/Faq'),
+            path:'/faq',
+            meta:{
+              hidden:true
+            },
+            name:'faq'
+          },
+          {
+            path:'/faq/add',
+            component:()=>import('@/views/faq/temp'),
+            name:'faq_add',
+            meta:{
+              hidden:true
+            }
+          }
+        ]
       },
 
       // C Program
