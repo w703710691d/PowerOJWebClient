@@ -4,13 +4,7 @@ import {
   BasicLayout,
   BlankLayout
 } from '@/layouts'
-<<<<<<< HEAD
-import {
-  RouteView, PageView
-} from '@/layouts/index'
-=======
 import { PageView , RouteView} from '@/layouts/index'
->>>>>>> origin/test
 // import FAQ from '@/assets/FAQ.svg?inline' // 要加?inline才能显示
 
 // const RouteView = {
