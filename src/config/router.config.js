@@ -4,9 +4,13 @@ import {
   BasicLayout,
   BlankLayout
 } from '@/layouts'
+<<<<<<< HEAD
 import {
   RouteView, PageView
 } from '@/layouts/index'
+=======
+import { PageView , RouteView} from '@/layouts/index'
+>>>>>>> origin/test
 // import FAQ from '@/assets/FAQ.svg?inline' // 要加?inline才能显示
 
 // const RouteView = {
@@ -29,27 +33,20 @@ export const asyncRouterMap = [
       title: 'menu.home'
     },
     redirect: '/problem', // 重定向
-    children: [{
+    children: [
+      {
         path: '',
         name: 'HomePage',
         component: () => import('@/views/dashboard/Analysis'),
         hidden: true,
-        meta: {
-          title: 'Problem12222',
-          keepAlive: true,
-          icon: 'bars'
-        }
+        meta: { title: 'Problem', keepAlive: true, icon: 'bars' }
       },
       // Problem
       {
         path: '/problem',
         name: 'Problem', // 唯一标识符 类似id
-        component: () => import('@/views/dashboard/Workplace'),
-        meta: {
-          title: 'Problem',
-          keepAlive: true,
-          icon: 'bars'
-        } // FAQ是自己导入的svg文件
+        component: () => import('@/views/dashboard/problem'),
+        meta: { title: 'Problem', keepAlive: true, icon: 'bars' } // FAQ是自己导入的svg文件
         // children: [
         //   {
         //     path: '/dashboard/workplace',
@@ -65,7 +62,7 @@ export const asyncRouterMap = [
         path: '/status',
         name: 'Status',
         // redirect: '/form/basicForm',
-        component: () => import('@/views/form/basicForm'),
+        component: () => import('@/views/form/status'),
         meta: {
           title: 'Status',
           icon: 'check-square',
@@ -89,7 +86,7 @@ export const asyncRouterMap = [
       {
         path: '/ranklist',
         name: 'Ranklist',
-        component: () => import('@/views/profile/basic'),
+        component: () => import('@/views/profile/ranklist'),
         // redirect: '/profile/basic',
         meta: {
           title: 'Ranklist',
@@ -101,7 +98,7 @@ export const asyncRouterMap = [
       {
         path: '/news',
         name: 'News',
-        component: () => import( /* webpackChunkName: "result" */ '@/views/result/Success'),
+        component: () => import(/* webpackChunkName: "result" */ '@/views/result/Success'),
         // redirect: '/result/success',
         meta: {
           title: 'News',
@@ -113,12 +110,29 @@ export const asyncRouterMap = [
       {
         path: '/notice',
         name: 'Notice',
-        component: () => import( /* webpackChunkName: "fail" */ '@/views/exception/403'),
+        component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/403'),
         // redirect: '/exception/403',
         meta: {
           title: 'Notice',
           icon: 'exclamation-circle'
-        }
+        },
+        children:[
+          {
+            component: () => import( /* webpackChunkName: "fail" */ '@/views/exception/notice'),
+            path:'/notice',
+            name:'notice',
+            // hidden:true,
+            meta:{
+              title:'Notice'
+            }
+          },
+          {
+            hidden:true,
+            path: '/notice/addnotice',
+            name: 'addnotice',
+            component: () => import('@/views/exception/addnotice')
+          }
+        ]
       },
 
       // Discuss
@@ -219,7 +233,7 @@ export const asyncRouterMap = [
       {
         path: '/scores',
         name: 'Scores',
-        component: () => import('@/views/scores/Scores-text2'),
+        component: () => import('@/views/scores/Scores'),
         meta: {
           title: 'Scores',
           icon: 'table',
@@ -334,7 +348,6 @@ export const constantRouterMap = [
   },
   {
     path: '/404',
-    component: () => import( /* webpackChunkName: "fail" */ '@/views/exception/404')
-  },
-
+    component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
+  }
 ]

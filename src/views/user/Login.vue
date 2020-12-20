@@ -6,45 +6,40 @@
         :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"
         @change="handleTabClick"
       > -->
-        <!-- <div class="user-login-other">
-            <a >
-              <router-link  class="register" :to="{ name: 'register' }">注册账户</router-link>
-            </a>
-        </div>-->
-        <!-- <a-tab-pane key="tab1" tab="账号密码登录"> -->
-          <!-- <router-link class="register" :to="{ name: 'register' }">注册账户</router-link> -->
+      <!-- <div class="user-login-other">
+          <a >
+            <router-link  class="register" :to="{ name: 'register' }">注册账户</router-link>
+          </a>
+      </div>-->
+      <!-- <a-tab-pane key="tab1" tab="账号密码登录"> -->
+      <!-- <router-link class="register" :to="{ name: 'register' }">注册账户</router-link> -->
 
-          <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px" :message="errMessage" />
-          <a-form-item>
-            <a-input
-              size="large"
-              type="text"
-              placeholder="账户: "
-              v-decorator="[
-                'username',
-                {
-                  rules: [{ required: true, message: '请输入帐户名或邮箱地址' }, { validator: handleUsernameOrEmail }],
-                  validateTrigger: 'change',
-                },
-              ]"
-            >
-              <a-icon slot="prefix" type="user" />
-            </a-input>
-          </a-form-item>
+      <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px" :message="errMessage" />
+      <a-form-item>
+        <a-input
+          size="large"
+          type="text"
+          placeholder="账户: "
+          v-decorator="['username', {
+            rules: [{ required: true, message: '请输入帐户名或邮箱地址' }, { validator: handleUsernameOrEmail }],
+            validateTrigger: 'change'}]"
+        >
+          <a-icon slot="prefix" type="user" />
+        </a-input>
+      </a-form-item>
 
-          <a-form-item>
-            <a-input-password
-              size="large"
-              placeholder="密码: "
-              v-decorator="[
-                'password',
-                { rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur' },
-              ]"
-            >
-              <a-icon slot="prefix" type="lock" />
-            </a-input-password>
-          </a-form-item>
-        <!-- </a-tab-pane> -->
+      <a-form-item>
+        <a-input-password
+          size="large"
+          placeholder="密码: "
+          v-decorator="['password', {
+            rules: [{ required: true, message: '请输入密码' }],
+            validateTrigger: 'blur'}]"
+        >
+          <a-icon slot="prefix" type="lock" />
+        </a-input-password>
+      </a-form-item>
+      <!-- </a-tab-pane> -->
       <!-- </a-tabs> -->
 
       <a-row :gutter="16">
@@ -54,10 +49,9 @@
               size="large"
               type="text"
               placeholder="验证码"
-              v-decorator="[
-                'captcha',
-                { rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur' },
-              ]"
+              v-decorator="['captcha', {
+                rules: [{ required: true, message: '请输入验证码' }],
+                validateTrigger: 'blur' }]"
             >
               <a-icon slot="prefix" type="mail" />
             </a-input>
@@ -70,7 +64,7 @@
 
       <a-form-item>
         <a-checkbox v-decorator="['rememberMe', { valuePropName: 'checked' }]">自动登录</a-checkbox>
-        <router-link :to="{ name: 'forget' }" class="forge-password" style="float: right">忘记密码</router-link>
+        <router-link :to="{name: 'forget'}" class="forge-password" style="float: right">忘记密码</router-link>
       </a-form-item>
 
       <a-form-item style="margin-top: 24px">
@@ -81,8 +75,8 @@
           :loading="state.loginBtn"
           :disabled="state.loginBtn"
           @click="handleSubmit"
-          >确定</a-button
-        >
+        >确定
+        </a-button>
       </a-form-item>
 
       <!-- <div class="user-login-other">
@@ -114,16 +108,16 @@ import md5 from 'md5'
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
-import { getSmsCaptcha, get2step, getCaptcha } from '@/api/login'
+import { get2step, getCaptcha } from '@/api/login'
 import store from '@/store'
 import router from '@/router'
 
 export default {
   components: {
-    TwoStepCaptcha,
+    TwoStepCaptcha
   },
   name: 'Login',
-  data() {
+  data () {
     return {
       imgSrc: undefined,
       customActiveKey: 'tab1',
@@ -139,13 +133,13 @@ export default {
         loginBtn: false,
         // login type: 0 email, 1 username, 2 telephone
         loginType: 0,
-        smsSendBtn: false,
+        smsSendBtn: false
       },
       verKey: undefined,
       errMessage: undefined
     }
   },
-  created() {
+  created () {
     get2step({})
       .then((res) => {
         this.requiredTwoStepCaptcha = res.result.stepCode
@@ -155,13 +149,13 @@ export default {
       })
     // this.requiredTwoStepCaptcha = true
   },
-  mounted() {
+  mounted () {
     this.getCaptchaImg()
   },
   methods: {
-    ...mapActions(['Login', 'Logout']),
+    ...mapActions(['loginAction', 'logoutAction']),
     // handler
-    handleUsernameOrEmail(rule, value, callback) {
+    handleUsernameOrEmail (rule, value, callback) {
       const { state } = this
       const regex = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/
       if (regex.test(value)) {
@@ -171,17 +165,17 @@ export default {
       }
       callback()
     },
-    handleTabClick(key) {
+    handleTabClick (key) {
       this.customActiveKey = key
       // this.form.resetFields()
     },
-    handleSubmit(e) {
+    handleSubmit (e) {
       e.preventDefault()
       const {
         form: { validateFields },
         state,
         customActiveKey,
-        Login,
+        loginAction
       } = this
 
       state.loginBtn = true
@@ -192,13 +186,13 @@ export default {
         if (!err) {
           console.log('login form', values)
 
-          let sendData = {
+          const sendData = {
             name: values.username,
             password: values.password,
             code: values.captcha,
-            verKey: this.verKey,
+            verKey: this.verKey
           }
-          Login(sendData)
+          loginAction(sendData)
             .then((res) => {
               this.loginSuccess(res)
               this.$emit('closeModel')
@@ -219,9 +213,9 @@ export default {
         }
       })
     },
-    async getCaptchaImg() {
+    async getCaptchaImg () {
       try {
-        let res = await getCaptcha()
+        const res = await getCaptcha()
         console.log(res)
         this.imgSrc = res.data.base64
         this.verKey = res.data.verKey
@@ -230,51 +224,51 @@ export default {
       }
     },
 
-    getCaptcha(e) {
+    getCaptcha (e) {
       e.preventDefault()
       const {
         form: { validateFields },
-        state,
+        state
       } = this
     },
-    stepCaptchaSuccess() {
+    stepCaptchaSuccess () {
       this.loginSuccess()
     },
-    stepCaptchaCancel() {
-      this.Logout().then(() => {
+    stepCaptchaCancel () {
+      this.logoutAction().then(() => {
         this.loginBtn = false
         this.stepCaptchaVisible = false
       })
     },
-    loginSuccess(res) {
+    loginSuccess (res) {
       console.log(res)
-      store.dispatch('GetInfo').then((res) => {
-        const roles = res.listRole.map(item=>item.name)
+      store.dispatch('getUserRolesAndPermissionsAction').then((res) => {
+        const roles = res.listRole.map(item => item.name)
         store
           .dispatch('GenerateRoutes', {
-            roles,
+            roles
           })
           .then(() => {
             window.location.reload()
             router.addRoutes(store.getters.addRouters)
             this.$notification.success({
               message: '欢迎',
-              description: `${timeFix()}，欢迎回来`,
+              description: `${timeFix()}，欢迎回来`
             })
             this.isLoginError = false
           })
       })
     },
-    requestFailed(err) {
+    requestFailed (err) {
       this.isLoginError = true
       this.$notification['error']({
         message: '错误',
         description: ((err.response || {}).data || {}).message || err || '请求出现错误，请稍后再试',
-        duration: 4,
+        duration: 4
       })
       //  this.$router.push({ path: '/' })
-    },
-  },
+    }
+  }
 }
 </script>
 
@@ -300,6 +294,7 @@ export default {
     height: 40px;
     width: 100%;
   }
+
   .register {
     display: block;
     float: right;

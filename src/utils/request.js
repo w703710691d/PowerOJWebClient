@@ -8,7 +8,7 @@ import { ACCESS_TOKEN } from '@/store/mutation-types'
 // 创建 axios 实例
 const request = axios.create({
   // API 请求的默认前缀
-  baseURL: process.env.VUE_APP_API_BASE_URL,
+  baseURL: process.env.VUE_APP_API_BASE_URL
   // timeout: 6000 // 请求超时时间
 })
 
@@ -54,14 +54,14 @@ request.interceptors.request.use(config => {
 
 // response interceptor
 request.interceptors.response.use((response) => {
-  const res = response.data;
+  const res = response.data
   if (response.config.responseType === 'blob') {
-    return res;
+    return res
   }
   if (Number(res.code) !== 200 && Number(res.code) !== 0) {
     console.log(res)
     notification.error({
-      message:res.message||res.msg  || 'Error'
+      message: res.message || res.msg || 'Error'
     })
     // if (Number(res.code) === 401) {
     //   store.dispatch('Logout').then(() => {

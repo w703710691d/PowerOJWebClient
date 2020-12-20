@@ -2,12 +2,12 @@ import request from '@/utils/request'
 
 /**
  * problerm接口
- * @param {*} parameter 
+ * @param {*} parameter
  */
-export function fetchProblemListData(parameter) {
-    return request({
-        url: '/dev/problem/index',
-        method: 'post',
-        data: parameter
-    })
+export function fetchProblemListData (parameter) {
+  return request({
+    url: 'problem/index',
+    method: 'post',
+    data: parameter
+  })
 }
