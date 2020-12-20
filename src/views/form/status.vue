@@ -12,7 +12,7 @@
       class="input-medium search-query2"
       v-model="UserName"
     />
-    <a-select name="scope" class="input-small" default-value="Language" @change="handleChangeInSelected" :allowClear="true">
+    <a-select name="scope" class="input-small" default-value="Language" @change="handleChangeInSelected1" :allowClear="true">
       <!-- <a-select-option value>All</a-select-option> -->
       <a-select-option value="Language" selected>Language</a-select-option>
       <a-select-option value="GCC11">GCC11</a-select-option>
@@ -30,7 +30,7 @@
       <a-select-option value="G++20">G++20</a-select-option>
       <a-select-option value="GCC18">GCC18</a-select-option>
     </a-select>
-    <a-select name="scope" class="input-small" default-value="Result" @change="handleChangeInSelected" :allowClear="true">
+    <a-select name="scope" class="input-small" default-value="Result" @change="handleChangeInSelected2" :allowClear="true">
       <!-- <a-select-option value>All</a-select-option> -->
       <a-select-option value="Result" selected>Result</a-select-option>
       <a-select-option value="AC">AC</a-select-option>
@@ -55,7 +55,7 @@
     <button type="submit" class="btn btn-info" @click="handleSearch">Search</button>
     <div class="pull-right">
       <span class="badge badge-info">{{pagination.current}}/{{totalPage}} Pages</span>
-      <span class="badge badge-info">{{pagination.total}} Problems</span>
+      <span class="badge badge-info">{{pagination.total}} Records</span>
     </div>
     <br />
     <br />
@@ -84,57 +84,57 @@ const columns = [
     title: 'Run ID',
     dataIndex: 'pid',
     width: '10%',
-    sorter: (a, b) => a.pid - b.pid
+    // sorter: (a, b) => a.pid - b.pid
   },
   {
     title: 'User',
     dataIndex: 'title1',
     width: '15%',
-    sorter: (a, b) => a.title.length - b.title.length,
+    // sorter: (a, b) => a.title.length - b.title.length,
     scopedSlots: { customRender: 'title1' }
   },
   {
     title: 'Problem',
     dataIndex: 'accepted',
     width: '10%',
-    sorter: (a, b) => a.accepted - b.accepted
+    // sorter: (a, b) => a.accepted - b.accepted
   },
   {
     title: 'Result',
     dataIndex: 'submission',
     width: '15%',
-    sorter: (a, b) => a.submission - b.submission
+    // sorter: (a, b) => a.submission - b.submission
   },
   {
     title: 'Time',
     dataIndex: 'ratio',
     width: '10%',
     scopedSlots: { customRender: 'ratio' },
-    sorter: (a, b) => a.ratio - b.ratio
+    // sorter: (a, b) => a.ratio - b.ratio
   },
   {
     title: 'Memory',
     dataIndex: 'ctime',
     width: '10%',
-    sorter: (a, b) => new Date(a.ctime).getTime() - new Date(b.ctime).getTime()
+    // sorter: (a, b) => new Date(a.ctime).getTime() - new Date(b.ctime).getTime()
   },
     {
     title: 'Language',
     dataIndex: 'ctime',
     width: '10%',
-    sorter: (a, b) => new Date(a.ctime).getTime() - new Date(b.ctime).getTime()
+    // sorter: (a, b) => new Date(a.ctime).getTime() - new Date(b.ctime).getTime()
   },
     {
     title: 'Code Length',
     dataIndex: 'ctime',
     width: '10%',
-    sorter: (a, b) => new Date(a.ctime).getTime() - new Date(b.ctime).getTime()
+    // sorter: (a, b) => new Date(a.ctime).getTime() - new Date(b.ctime).getTime()
   },
     {
     title: 'Submit Time',
     dataIndex: 'ctime',
     width: '10%',
-    sorter: (a, b) => new Date(a.ctime).getTime() - new Date(b.ctime).getTime()
+    // sorter: (a, b) => new Date(a.ctime).getTime() - new Date(b.ctime).getTime()
   },
 
 ]
@@ -214,9 +214,13 @@ export default {
     handleChangeInSelected(value) {
       this.selected = value
     },
+    handleChangeInSelected(value) {
+      this.selected = value
+    },
     handleSearch() {
       let obj = { page: 1, limit: 10 }
-      if (this.selected) obj[this.selected] = this.text
+      if (this.selected1) obj[this.selected1] = this.ProblemID
+      if (this.selected2) obj[this.selected2] = this.ProblemID
       this.reserchObj = { ...obj }
       this.getProblemList()
     }
@@ -261,15 +265,15 @@ input.search-query1 {
 }
 input.search-query2 {
   display: inline-block;
-  margin-bottom: 0;
+  margin-left: -1px;
   vertical-align: middle;
   padding-right: 14px;
   padding-left: 14px;
-  border: 1px solid #ccc;
+  // border: 1px solid #ccc;
 }
 .input-small {
   display: inline-block;
-  width: 90px;
+  width: 120px;
   margin-bottom: 0;
   vertical-align: middle;
   border-radius: 4px 0 0 4px;
@@ -277,8 +281,8 @@ input.search-query2 {
   font-size: 14px;
   height: 32px;
   line-height: 32px;
-  background-color: #fff;
-  border: 1px solid #ccc;
+  // background-color: #fff;
+  // border: 1px solid #ccc;
   margin-left: -1px;
 }
 select {

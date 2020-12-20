@@ -4,6 +4,7 @@ import {
   BasicLayout,
   BlankLayout
 } from '@/layouts'
+import { PageView , RouteView} from '@/layouts/index'
 // import FAQ from '@/assets/FAQ.svg?inline' // 要加?inline才能显示
 
 // const RouteView = {
@@ -38,7 +39,7 @@ export const asyncRouterMap = [
       {
         path: '/problem',
         name: 'Problem', // 唯一标识符 类似id
-        component: () => import('@/views/dashboard/Workplace'),
+        component: () => import('@/views/dashboard/problem'),
         meta: { title: 'Problem', keepAlive: true, icon: 'bars' } // FAQ是自己导入的svg文件
         // children: [
         //   {
@@ -55,7 +56,7 @@ export const asyncRouterMap = [
         path: '/status',
         name: 'Status',
         // redirect: '/form/basicForm',
-        component: () => import('@/views/form/basicForm'),
+        component: () => import('@/views/form/status'),
         meta: {
           title: 'Status',
           icon: 'check-square',
@@ -79,7 +80,7 @@ export const asyncRouterMap = [
       {
         path: '/ranklist',
         name: 'Ranklist',
-        component: () => import('@/views/profile/basic'),
+        component: () => import('@/views/profile/ranklist'),
         // redirect: '/profile/basic',
         meta: {
           title: 'Ranklist',
@@ -108,7 +109,24 @@ export const asyncRouterMap = [
         meta: {
           title: 'Notice',
           icon: 'exclamation-circle'
-        }
+        },
+        children:[
+          {
+            component: () => import( /* webpackChunkName: "fail" */ '@/views/exception/notice'),
+            path:'/notice',
+            name:'notice',
+            // hidden:true,
+            meta:{
+              title:'Notice'
+            }
+          },
+          {
+            hidden:true,
+            path: '/notice/addnotice',
+            name: 'addnotice',
+            component: () => import('@/views/exception/addnotice')
+          }
+        ]
       },
 
       // Discuss
@@ -189,7 +207,7 @@ export const asyncRouterMap = [
       {
         path: '/scores',
         name: 'Scores',
-        component: () => import('@/views/scores/Scores-text2'),
+        component: () => import('@/views/scores/Scores'),
         meta: {
           title: 'Scores',
           icon: 'table',

@@ -1,45 +1,14 @@
 <template>
   <a-card>
-    <a-form-model layout="inline" :model="formInline" @submit="handleSubmit" @submit.native.prevent>
-
-      <a-form-model-item label="Id">
+    <a-form-model layout="inline"  @submit="handleSubmit" @submit.native.prevent>
+      <!-- <a-form-model-item label="Id">
         <a-input v-model="formInline.id" placeholder="请输入id"></a-input>
-      </a-form-model-item>
-
-      <a-form-model-item label="Term">
-        <a-select v-model="termValue" default-value="name" style="width: 240px" placeholder="please select your term">
-          <a-select-option value="term1"> 2020-2021 第一学期 </a-select-option>
-          <a-select-option value="term2"> 2019-2020 第二学期 </a-select-option>
-        </a-select>
-      </a-form-model-item>
-      <br/>
+      </a-form-model-item> -->
+          <a-form-model-item   >
+       <a-range-picker @change="dateChange" :model="formInline"/>
+       </a-form-model-item>
       <a-form-model-item>
-        <a-select v-model="selectValue" default-value="name" style="width: 120px" @change="handleChange">
-          <a-select-option value="name"> Name </a-select-option>
-          <a-select-option value="realname"> RealName </a-select-option>
-          <a-select-option value="class"> Class </a-select-option>
-
-          <a-select-option value="date"> Date </a-select-option>
-
-        </a-select>
-      </a-form-model-item>
-
-      <a-form-model-item  label="Date" v-if="selectValue === 'date'">
-        <a-range-picker @change="dateChange">
-          <template slot="dateRender" slot-scope="current">
-            <div class="ant-calendar-date" :style="getCurrentStyle(current)">{{ current.date() }}</div>
-          </template> 
-        </a-range-picker>
-      </a-form-model-item>
-
-      <a-form-model-item>
-        <a-input v-model="inputValue" type="text" placeholder="请输入" />
-      </a-form-model-item>
-
-      <a-form-model-item>
-
         <!-- :disabled="formInline.id === '' || formInline.date === ''" -->
-
         <a-button type="primary" html-type="submit">Serach</a-button>
       </a-form-model-item>
     </a-form-model>
@@ -164,6 +133,9 @@ export default {
   methods: {
     handleChange(value) {
       console.log(`selected ${value}`)
+    },
+    onChange(value) {
+       console.log(`selected ${value}`)
     },
     handleSubmit(e) {
       const data = {

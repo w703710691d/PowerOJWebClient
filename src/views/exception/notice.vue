@@ -1,19 +1,7 @@
 <template>
   <a-card>
-    <a-select name="scope" class="input-small" default-value="all" @change="handleChangeInSelected" :allowClear="true">
-      <!-- <a-select-option value>All</a-select-option> -->
-      <a-select-option value="all" selected>All</a-select-option>
-      <a-select-option value="ID" selected>ID</a-select-option>
-      <a-select-option value="Date">Date</a-select-option>
-      <a-select-option value="Term">Term</a-select-option>
-    </a-select>
-    <a-input
-      placeholder="Search or Goto"
-      style="width: 200px"
-      class="input-medium search-query"
-      v-model="text"
-    />
-    <button type="submit" class="btn btn-info" @click="handleSearch">Search</button>
+     <a-button  class="btn btn-info"><router-link :to="{ name: 'addnotice' }" >Add a notice</router-link>
+     </a-button>
     <div class="pull-right">
       <span class="badge badge-info">{{pagination.current}}/{{totalPage}} Pages</span>
       <span class="badge badge-info">{{pagination.total}} Problems</span>
@@ -27,7 +15,7 @@
       :pagination="pagination"
       :loading="loading"
       @change="handleTableChange"
-      bordered
+      bordered0
     >
       <template slot="title1" slot-scope="text, record">
         <div v-html="record.title"></div>
@@ -39,50 +27,43 @@
   </a-card>
 </template>
 <script>
-import { getScoreByTime,getScoreById,getScoreByYear,fetchScoreListData} from '@/api/scores'
+import { fetchNoticeListData } from '@/api/notice'
 
 const columns = [
   {
-    title: 'ID',
-    dataIndex: 'pid',
+    title: 'Num',
+    dataIndex: 'id',
     width: '10%',
     // sorter: (a, b) => a.pid - b.pid
   },
   {
-    title: 'username',
-    dataIndex: 'title1',
+    title: 'Title',
+    dataIndex: 'title',
     width: '40%',
-    sorter: (a, b) => a.title.length - b.title.length,
-    scopedSlots: { customRender: 'title1' }
+    // sorter: (a, b) => a.title.length - b.title.length,
+    scopedSlots: { customRender: 'title' }
   },
   {
-    title: 'scores',
-    dataIndex: 'accepted',
+    title: 'Publisher',
+    dataIndex: 'publisher',
     width: '10%',
     // sorter: (a, b) => a.accepted - b.accepted
   },
   {
-    title: 'date',
-    dataIndex: 'submission',
-    width: '10%',
-    sorter: (a, b) => a.submission - b.submission
-  },
-  {
-    title: 'Ratio',
-    dataIndex: 'ratio',
-    width: '10%',
-    scopedSlots: { customRender: 'ratio' },
-    sorter: (a, b) => a.ratio - b.ratio
-  },
-  {
-    title: 'Date',
-    dataIndex: 'ctime',
+    title: 'Start Time',
+    dataIndex: 'stime',
     width: '20%',
-    sorter: (a, b) => new Date(a.ctime).getTime() - new Date(b.ctime).getTime()
+    // sorter: (a, b) => a.submission - b.submission
+  },
+  {
+    title: 'End Time',
+    dataIndex: 'etime',
+    width: '20%',
+    // sorter: (a, b) => new Date(a.ctime).getTime() - new Date(b.ctime).getTime()
   }
 ]
 export default {
-  name: 'Scores-text',
+  name: 'problem',
   data() {
     return {
       columns,
@@ -109,14 +90,13 @@ export default {
   },
   mounted() {
     // this.fetch()
-    this.getScoreList()
+    this.getNoticeList()
   },
   methods: {
-    async getScoreList() {
+    async getNoticeList() {
       try {
         this.loading = true
-        // let res = await getScoreByTime({ ...this.reserchObj })
-        let res = await getScoreByTime({ startTime:'2020-08-01 00:00:00',endTime:'2020-12-12 13:12:12' })
+        let res = await fetchNoticeListData({ ...this.reserchObj })
         console.log(res)
         let pagination = {
           ...this.pagination,
@@ -152,7 +132,7 @@ export default {
         page: pagination.current,
         limit: pagination.pageSize
       }
-      this.getScoreList()
+      this.getNoticeList()
     },
     handleChangeInSelected(value) {
       this.selected = value
@@ -161,7 +141,7 @@ export default {
       let obj = { page: 1, limit: 10 }
       if (this.selected) obj[this.selected] = this.text
       this.reserchObj = { ...obj }
-      this.getScoreList()
+      this.getNoticeList()
     }
   }
 }
@@ -194,39 +174,9 @@ export default {
   vertical-align: baseline;
   border-radius: 9px;
 }
-input.search-query {
-  display: inline-block;
-  margin-bottom: 0;
-  vertical-align: middle;
-  padding-right: 14px;
-  padding-left: 14px;
-  border-left: 0px;
-  // border-radius: 14px 0 0 14px;
-}
-.input-small {
-  display: inline-block;
-  width: 90px;
-  vertical-align: middle;
-  border-radius: 14px 0 0 14px;
-  // position: relative;
-  font-size: 14px;
-  height: 32px;
-  line-height: 32px;
-  // background-color: #fff;
-  // border: 1px solid #ccc;
-}
-select {
-  display: inline-block;
-  margin-bottom: 0;
-  width: 220px;
-  vertical-align: middle;
-  border-radius: 4px 0 0 4px;
-  background-color: #fff;
-  border: 1px solid #ccc;
-}
 .btn-info {
   vertical-align: top;
-  border-radius: 0 14px 14px 0;
+  // border-radius: 0 14px 14px 0;
   color: #fff;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
   background-color: #49afcd;
@@ -237,7 +187,7 @@ select {
   text-align: center;
   cursor: pointer;
   margin-left: -1px;
-  background-image: linear-gradient(to bottom, #52c41a, #52c41a);
+  background-image: linear-gradient(to bottom, #5bb75b, #5bb75b);
   background-repeat: repeat-x;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 }

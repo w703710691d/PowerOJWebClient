@@ -6,8 +6,9 @@
       class="input-medium search-query"
       v-model="text"
     />
-    <a-select name="scope" class="input-small" @change="handleChangeInSelected" :allowClear="true">
+    <a-select name="scope" class="input-small" default-value="all" @change="handleChangeInSelected" :allowClear="true">
       <!-- <a-select-option value>All</a-select-option> -->
+      <a-select-option value="all" selected>All</a-select-option>
       <a-select-option value="title" selected>Title</a-select-option>
       <a-select-option value="source">Source</a-select-option>
       <a-select-option value="pid">Problem ID</a-select-option>
@@ -208,15 +209,15 @@ input.search-query {
 .input-small {
   display: inline-block;
   width: 90px;
-  margin-bottom: 0;
+  margin-left: -3px;
   vertical-align: middle;
   border-radius: 4px 0 0 4px;
-  position: relative;
+  // position: relative;
   font-size: 14px;
   height: 32px;
   line-height: 32px;
-  background-color: #fff;
-  border: 1px solid #ccc;
+  // background-color: #fff;
+  // border: 1px solid #ccc;
 }
 
 select {

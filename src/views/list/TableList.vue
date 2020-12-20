@@ -1,318 +1,201 @@
 <template>
-  <page-header-wrapper>
-    <a-card :bordered="false">
-      <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="规则编号">
-                <a-input v-model="queryParam.id" placeholder=""/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="8" :sm="24">
-              <a-form-item label="使用状态">
-                <a-select v-model="queryParam.status" placeholder="请选择" default-value="0">
-                  <a-select-option value="0">全部</a-select-option>
-                  <a-select-option value="1">关闭</a-select-option>
-                  <a-select-option value="2">运行中</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <template v-if="advanced">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="调用次数">
-                  <a-input-number v-model="queryParam.callNo" style="width: 100%"/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="更新日期">
-                  <a-date-picker v-model="queryParam.date" style="width: 100%" placeholder="请输入更新日期"/>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="使用状态">
-                  <a-select v-model="queryParam.useStatus" placeholder="请选择" default-value="0">
-                    <a-select-option value="0">全部</a-select-option>
-                    <a-select-option value="1">关闭</a-select-option>
-                    <a-select-option value="2">运行中</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item label="使用状态">
-                  <a-select placeholder="请选择" default-value="0">
-                    <a-select-option value="0">全部</a-select-option>
-                    <a-select-option value="1">关闭</a-select-option>
-                    <a-select-option value="2">运行中</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-            </template>
-            <a-col :md="!advanced && 8 || 24" :sm="24">
-              <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'"/>
-                </a>
-              </span>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
-
-      <div class="table-operator">
-        <a-button type="primary" icon="plus" @click="handleAdd">新建</a-button>
-        <a-dropdown v-action:edit v-if="selectedRowKeys.length > 0">
-          <a-menu slot="overlay">
-            <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-            <!-- lock | unlock -->
-            <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
-          </a-menu>
-          <a-button style="margin-left: 8px">
-            批量操作 <a-icon type="down" />
-          </a-button>
-        </a-dropdown>
-      </div>
-
-      <s-table
-        ref="table"
-        size="default"
-        rowKey="key"
-        :columns="columns"
-        :data="loadData"
-        :alert="true"
-        :rowSelection="rowSelection"
-        showPagination="auto"
-      >
-        <span slot="serial" slot-scope="text, record, index">
-          {{ index + 1 }}
-        </span>
-        <span slot="status" slot-scope="text">
-          <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
-        </span>
-        <span slot="description" slot-scope="text">
-          <ellipsis :length="4" tooltip>{{ text }}</ellipsis>
-        </span>
-
-        <span slot="action" slot-scope="text, record">
-          <template>
-            <a @click="handleEdit(record)">配置</a>
-            <a-divider type="vertical" />
-            <a @click="handleSub(record)">订阅报警</a>
-          </template>
-        </span>
-      </s-table>
-
-      <create-form
-        ref="createModal"
-        :visible="visible"
-        :loading="confirmLoading"
-        :model="mdl"
-        @cancel="handleCancel"
-        @ok="handleOk"
-      />
-      <step-by-step-modal ref="modal" @ok="handleOk"/>
-    </a-card>
-  </page-header-wrapper>
+  <a-card>
+    
+    <button type="submit" class="btn btn-info" @click="handleSearch">Recent Contests</button>
+    <div class="pull-right">
+      <span class="badge badge-info">{{pagination.current}}/{{totalPage}} Pages</span>
+      <span class="badge badge-info">{{pagination.total}} Contests</span>
+    </div>
+    <br />
+    <br />
+    <a-table
+      :columns="columns"
+      :row-key="record => record.pid"
+      :data-source="data"
+      :pagination="pagination"
+      :loading="loading"
+      @change="handleTableChange"
+    >
+      <template slot="title1" slot-scope="text, record">
+        <div v-html="record.title"></div>
+      </template>
+      <template slot="ratio" slot-scope="text,record">
+        <a-statistic :value="(record.accepted/record.submission) *100" :precision="2" suffix="%"></a-statistic>
+      </template>
+    </a-table>
+    <span class="time" id="current">2020-11-10 20:37:01</span>
+  </a-card>
 </template>
-
 <script>
-import moment from 'moment'
-import { STable, Ellipsis } from '@/components'
-import { getRoleList, getServiceList } from '@/api/manage'
-
-import StepByStepModal from './modules/StepByStepModal'
-import CreateForm from './modules/CreateForm'
+import { fetchProblemListData } from '@/api/problem'
 
 const columns = [
   {
-    title: '#',
-    scopedSlots: { customRender: 'serial' }
+    title: 'ID',
+    dataIndex: 'pid',
+    width: '10%',
+    sorter: (a, b) => a.pid - b.pid
   },
   {
-    title: '规则编号',
-    dataIndex: 'no'
+    title: 'Title',
+    dataIndex: 'title1',
+    width: '40%',
+    sorter: (a, b) => a.title.length - b.title.length,
+    scopedSlots: { customRender: 'title1' }
   },
   {
-    title: '描述',
-    dataIndex: 'description',
-    scopedSlots: { customRender: 'description' }
+    title: 'Start Time',
+    dataIndex: 'accepted',
+    width: '10%',
+    sorter: (a, b) => a.accepted - b.accepted
   },
   {
-    title: '服务调用次数',
-    dataIndex: 'callNo',
-    sorter: true,
-    needTotal: true,
-    customRender: (text) => text + ' 次'
+    title: 'End Time',
+    dataIndex: 'submission',
+    width: '10%',
+    sorter: (a, b) => a.submission - b.submission
   },
   {
-    title: '状态',
-    dataIndex: 'status',
-    scopedSlots: { customRender: 'status' }
+    title: 'Access',
+    dataIndex: 'ratio',
+    width: '10%',
+    scopedSlots: { customRender: 'ratio' },
+    sorter: (a, b) => a.ratio - b.ratio
   },
   {
-    title: '更新时间',
-    dataIndex: 'updatedAt',
-    sorter: true
-  },
-  {
-    title: '操作',
-    dataIndex: 'action',
-    width: '150px',
-    scopedSlots: { customRender: 'action' }
+    title: 'Status',
+    dataIndex: 'ctime',
+    width: '20%',
+    sorter: (a, b) => new Date(a.ctime).getTime() - new Date(b.ctime).getTime()
   }
 ]
-
-const statusMap = {
-  0: {
-    status: 'default',
-    text: '关闭'
-  },
-  1: {
-    status: 'processing',
-    text: '运行中'
-  },
-  2: {
-    status: 'success',
-    text: '已上线'
-  },
-  3: {
-    status: 'error',
-    text: '异常'
-  }
-}
-
 export default {
-  name: 'TableList',
-  components: {
-    STable,
-    Ellipsis,
-    CreateForm,
-    StepByStepModal
-  },
-  data () {
-    this.columns = columns
+  name: 'problem',
+  data() {
     return {
-      // create model
-      visible: false,
-      confirmLoading: false,
-      mdl: null,
-      // 高级搜索 展开/关闭
-      advanced: false,
-      // 查询参数
-      queryParam: {},
-      // 加载数据方法 必须为 Promise 对象
-      loadData: parameter => {
-        const requestParameters = Object.assign({}, parameter, this.queryParam)
-        console.log('loadData request parameters:', requestParameters)
-        return getServiceList(requestParameters)
-          .then(res => {
-            return res.result
-          })
+      columns,
+      data: [],
+      pagination: {
+        position: 'bottom',
+        current:1,
+        pageSize:10,
+        total:1
       },
-      selectedRowKeys: [],
-      selectedRows: []
+      loading: false,
+      reserchObj: {
+        page: 1,
+        limit: 10
+        // pid:undefined,
+        // source:undefined,
+        // title:undefined
+      },
+      text: undefined,
+      selected: undefined,
+      totalPage: 1
+
     }
   },
-  filters: {
-    statusFilter (type) {
-      return statusMap[type].text
-    },
-    statusTypeFilter (type) {
-      return statusMap[type].status
-    }
-  },
-  created () {
-    getRoleList({ t: new Date() })
-  },
-  computed: {
-    rowSelection () {
-      return {
-        selectedRowKeys: this.selectedRowKeys,
-        onChange: this.onSelectChange
-      }
-    }
+  mounted() {
+    // this.fetch()
+    this.getProblemList()
   },
   methods: {
-    handleAdd () {
-      this.mdl = null
-      this.visible = true
-    },
-    handleEdit (record) {
-      this.visible = true
-      this.mdl = { ...record }
-    },
-    handleOk () {
-      const form = this.$refs.createModal.form
-      this.confirmLoading = true
-      form.validateFields((errors, values) => {
-        if (!errors) {
-          console.log('values', values)
-          if (values.id > 0) {
-            // 修改 e.g.
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                resolve()
-              }, 1000)
-            }).then(res => {
-              this.visible = false
-              this.confirmLoading = false
-              // 重置表单数据
-              form.resetFields()
-              // 刷新表格
-              this.$refs.table.refresh()
-
-              this.$message.info('修改成功')
-            })
-          } else {
-            // 新增
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                resolve()
-              }, 1000)
-            }).then(res => {
-              this.visible = false
-              this.confirmLoading = false
-              // 重置表单数据
-              form.resetFields()
-              // 刷新表格
-              this.$refs.table.refresh()
-
-              this.$message.info('新增成功')
-            })
-          }
-        } else {
-          this.confirmLoading = false
+    async getProblemList() {
+      try {
+        this.loading = true
+        let res = await fetchProblemListData({ ...this.reserchObj })
+        console.log(res)
+        let pagination = {
+          ...this.pagination,
+          current: this.reserchObj.page,
+          pageSize: this.reserchObj.limit
         }
-      })
-    },
-    handleCancel () {
-      this.visible = false
+        pagination.total = res.data.total
+        this.totalPage=res.data.pages
+        this.data = res.data.records.map(item => ({
+          ...item,
+          ratio: (item.accepted / item.submission).toFixed(2)
+        }))
+        this.pagination = pagination
+        this.loading = false
 
-      const form = this.$refs.createModal.form
-      form.resetFields() // 清理表单数据（可不做）
-    },
-    handleSub (record) {
-      if (record.status !== 0) {
-        this.$message.info(`${record.no} 订阅成功`)
-      } else {
-        this.$message.error(`${record.no} 订阅失败，规则已关闭`)
+        // let pid = undefined
+        // let title = undefined
+        // let source =  undefined
+        // this.reserchObj = {
+        //   ...this.reserchObj,
+        //   pid: this.text,
+        //   title: this.text,
+        //   source: this.text
+        // }
+      } catch (error) {
+        console.log(error)
+        this.loading = false
       }
     },
-    onSelectChange (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
-    },
-    toggleAdvanced () {
-      this.advanced = !this.advanced
-    },
-    resetSearchForm () {
-      this.queryParam = {
-        date: moment(new Date())
+    handleTableChange(pagination) {
+      this.reserchObj = {
+        ...this.reserchObj,
+        page: pagination.current,
+        limit: pagination.pageSize
       }
+      this.getProblemList()
+    },
+    handleChangeInSelected(value) {
+      this.selected = value
+    },
+    handleSearch() {
+      let obj = { page: 1, limit: 10 }
+      if (this.selected) obj[this.selected] = this.text
+      this.reserchObj = { ...obj }
+      this.getProblemList()
     }
   }
 }
 </script>
+<style lang="less" scoped>
+.pull-right {
+  margin-right: 0%;
+  float: right;
+}
+.badge-info {
+  background-color: #52c41a;
+}
+.badge {
+  margin-left: 4px;
+  padding-right: 9px;
+  padding-left: 9px;
+  -webkit-border-radius: 9px;
+  -moz-border-radius: 9px;
+  border-radius: 9px;
+}
+.badge {
+  display: inline-block;
+  padding: 2px 4px;
+  font-size: 11.844px;
+  font-weight: bold;
+  line-height: 14px;
+  color: #fff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 9px;
+}
+.btn-info {
+  vertical-align: top;
+  // border-radius: 0 14px 14px 0;
+  color: #fff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  background-color: #49afcd;
+  padding: 4px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  cursor: pointer;
+  margin-left: -1px;
+  background-image: linear-gradient(to bottom, #5bb75b, #5bb75b);
+  background-repeat: repeat-x;
+  border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+}
+</style>
