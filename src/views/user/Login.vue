@@ -1,111 +1,84 @@
 <template>
   <div class="main">
-    <a-form id="formLogin" class="user-layout-login" ref="formLogin" :form="form">
-      <!-- <a-tabs
-        :activeKey="customActiveKey"
-        :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"
-        @change="handleTabClick"
-      > -->
-        <!-- <div class="user-login-other">
-            <a >
-              <router-link  class="register" :to="{ name: 'register' }">注册账户</router-link>
-            </a>
-        </div>-->
-        <!-- <a-tab-pane key="tab1" tab="账号密码登录"> -->
-          <!-- <router-link class="register" :to="{ name: 'register' }">注册账户</router-link> -->
+    <div v-if="!isForget">
+      <a-form id="formLogin" class="user-layout-login" ref="formLogin" :form="form">
+        <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px" :message="errMessage" />
+        <a-form-item>
+          <a-input
+            size="large"
+            type="text"
+            placeholder="账户: "
+            v-decorator="[
+              'username',
+              {
+                rules: [{ required: true, message: '请输入帐户名或邮箱地址' }, { validator: handleUsernameOrEmail }],
+                validateTrigger: 'change',
+              },
+            ]"
+          >
+            <a-icon slot="prefix" type="user" />
+          </a-input>
+        </a-form-item>
 
-          <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px" :message="errMessage" />
-          <a-form-item>
-            <a-input
-              size="large"
-              type="text"
-              placeholder="账户: "
-              v-decorator="[
-                'username',
-                {
-                  rules: [{ required: true, message: '请输入帐户名或邮箱地址' }, { validator: handleUsernameOrEmail }],
-                  validateTrigger: 'change',
-                },
-              ]"
-            >
-              <a-icon slot="prefix" type="user" />
-            </a-input>
-          </a-form-item>
+        <a-form-item>
+          <a-input-password
+            size="large"
+            placeholder="密码: "
+            v-decorator="['password', { rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur' }]"
+          >
+            <a-icon slot="prefix" type="lock" />
+          </a-input-password>
+        </a-form-item>
+        <a-row :gutter="16">
+          <a-col class="gutter-row" :span="16">
+            <a-form-item>
+              <a-input
+                size="large"
+                type="text"
+                placeholder="验证码"
+                v-decorator="[
+                  'captcha',
+                  { rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur' },
+                ]"
+              >
+                <a-icon slot="prefix" type="mail" />
+              </a-input>
+            </a-form-item>
+          </a-col>
+          <a-col :span="4">
+            <img :src="imgSrc" alt="验证码" @click="getCaptchaImg" />
+          </a-col>
+        </a-row>
 
-          <a-form-item>
-            <a-input-password
-              size="large"
-              placeholder="密码: "
-              v-decorator="[
-                'password',
-                { rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur' },
-              ]"
-            >
-              <a-icon slot="prefix" type="lock" />
-            </a-input-password>
-          </a-form-item>
-        <!-- </a-tab-pane> -->
-      <!-- </a-tabs> -->
+        <a-form-item>
+          <a-checkbox v-decorator="['rememberMe', { valuePropName: 'checked' }]">自动登录</a-checkbox>
+          <a @click="toForget">忘记密码</a>
+        </a-form-item>
 
-      <a-row :gutter="16">
-        <a-col class="gutter-row" :span="16">
-          <a-form-item>
-            <a-input
-              size="large"
-              type="text"
-              placeholder="验证码"
-              v-decorator="[
-                'captcha',
-                { rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur' },
-              ]"
-            >
-              <a-icon slot="prefix" type="mail" />
-            </a-input>
-          </a-form-item>
-        </a-col>
-        <a-col :span="4">
-          <img :src="imgSrc" alt="验证码" @click="getCaptchaImg" />
-        </a-col>
-      </a-row>
+        <a-form-item style="margin-top: 24px">
+          <a-button
+            size="large"
+            type="primary"
+            class="login-button"
+            :loading="state.loginBtn"
+            :disabled="state.loginBtn"
+            @click="handleSubmit"
+            >确定</a-button
+          >
+        </a-form-item>
+      </a-form>
 
-      <a-form-item>
-        <a-checkbox v-decorator="['rememberMe', { valuePropName: 'checked' }]">自动登录</a-checkbox>
-        <router-link :to="{ name: 'forget' }" class="forge-password" style="float: right">忘记密码</router-link>
-      </a-form-item>
+      <two-step-captcha
+        v-if="requiredTwoStepCaptcha"
+        :visible="stepCaptchaVisible"
+        @success="stepCaptchaSuccess"
+        @cancel="stepCaptchaCancel"
+      ></two-step-captcha>
+    </div>
 
-      <a-form-item style="margin-top: 24px">
-        <a-button
-          size="large"
-          type="primary"
-          class="login-button"
-          :loading="state.loginBtn"
-          :disabled="state.loginBtn"
-          @click="handleSubmit"
-          >确定</a-button
-        >
-      </a-form-item>
-
-      <!-- <div class="user-login-other">
-        <span>其他登录方式</span>
-        <a>
-          <a-icon class="item-icon" type="alipay-circle"></a-icon>
-        </a>
-        <a>
-          <a-icon class="item-icon" type="taobao-circle"></a-icon>
-        </a>
-        <a>
-          <a-icon class="item-icon" type="weibo-circle"></a-icon>
-        </a>
-        <router-link class="register" :to="{ name: 'register' }">注册账户</router-link>
-      </div>-->
-    </a-form>
-
-    <two-step-captcha
-      v-if="requiredTwoStepCaptcha"
-      :visible="stepCaptchaVisible"
-      @success="stepCaptchaSuccess"
-      @cancel="stepCaptchaCancel"
-    ></two-step-captcha>
+    <div v-if="isForget">
+      <forget/>
+    </div>
   </div>
 </template>
 
@@ -117,10 +90,12 @@ import { timeFix } from '@/utils/util'
 import { getSmsCaptcha, get2step, getCaptcha } from '@/api/login'
 import store from '@/store'
 import router from '@/router'
+import Forget from './Forget'
 
 export default {
   components: {
     TwoStepCaptcha,
+    Forget,
   },
   name: 'Login',
   data() {
@@ -142,7 +117,8 @@ export default {
         smsSendBtn: false,
       },
       verKey: undefined,
-      errMessage: undefined
+      errMessage: undefined,
+      isForget: false
     }
   },
   created() {
@@ -161,6 +137,13 @@ export default {
   methods: {
     ...mapActions(['Login', 'Logout']),
     // handler
+    reset() {
+      this.isForget = false
+    },
+    toForget() {
+      this.isForget = true
+      this.$emit('changeTitle', '忘记密码')
+    },
     handleUsernameOrEmail(rule, value, callback) {
       const { state } = this
       const regex = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/
@@ -249,7 +232,7 @@ export default {
     loginSuccess(res) {
       console.log(res)
       store.dispatch('GetInfo').then((res) => {
-        const roles = res.listRole.map(item=>item.name)
+        const roles = res.listRole.map((item) => item.name)
         store
           .dispatch('GenerateRoutes', {
             roles,
