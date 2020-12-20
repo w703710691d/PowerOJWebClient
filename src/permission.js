@@ -19,10 +19,10 @@ NProgress.configure({
   showSpinner: false
 }) // NProgress Configuration
 
-const allowList = ['login', 'register', 'registerResult', 'forget'] // no redirect allowList
-const loginRoutePath = '/user/login'
-const defaultRoutePath = '/dashboard/workplace'
-const HomePage = '/problem'
+// const allowList = ['login', 'register', 'registerResult', 'forget'] // no redirect allowList
+// const loginRoutePath = '/user/login'
+// const defaultRoutePath = '/dashboard/workplace'
+// const HomePage = '/problem'
 
 router.beforeEach((to, from, next) => {
   NProgress.start() // start progress bar
@@ -98,7 +98,7 @@ router.beforeEach((to, from, next) => {
     } else {
       next()
     }
-    store.dispatch('getGuestTokenAction').catch(err=>{
+    store.dispatch('getGuestTokenAction').catch(err => {
       console.log(err)
     })
   }
