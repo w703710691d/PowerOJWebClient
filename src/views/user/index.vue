@@ -5,21 +5,20 @@
     <a-icon slot="prefix" type="star" />
     <a-button @click="toggleStatus('register')" style="margin-right:20px">注册</a-button>
     <a-modal
-      :title="status === 'login' ? '登录' : '注册'"
+      :title="modalTitle"
       :visible="visible"
       :footer="null"
       @cancel="closeModal"
     >
-      <login @closeModel="closeModal" v-if="status === 'login'"></login>
-      <register v-else></register>
-    </a-modal>
+      <login v-if="status === 'login'" @closeModel="closeModal" @changeTitle="handleTitleChange" ref="login"></login>
+      <register v-if="status === 'register'"></register>
+    </a-modal><!--共同的model-->
   </div>
 </template>
 
 <script>
 import Login from './Login.vue'
 import Register from './Register'
-
 export default {
   name: 'LoginCompoment',
   components: {
@@ -29,7 +28,13 @@ export default {
   data () {
     return {
       visible: false,
-      status: 'login'
+      status: 'login',
+      title: '登录'
+    }
+  },
+  computed: {
+    modalTitle() {
+      return this.status === 'login' ? this.title === '登录' ? '登录' : '忘记密码' : '注册'
     }
   },
   methods: {
@@ -39,6 +44,11 @@ export default {
     },
     closeModal () {
       this.visible = false
+      this.title = '登录'
+      this.$refs.login.reset()
+    },
+    handleTitleChange(data){
+      this.title = data
     }
   }
 }

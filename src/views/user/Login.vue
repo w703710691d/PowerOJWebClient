@@ -111,6 +111,7 @@ import { timeFix } from '@/utils/util'
 import { get2step, getCaptcha } from '@/api/login'
 import store from '@/store'
 import router from '@/router'
+import Forget from './Forget'
 
 export default {
   components: {
@@ -136,7 +137,8 @@ export default {
         smsSendBtn: false
       },
       verKey: undefined,
-      errMessage: undefined
+      errMessage: undefined,
+      isForget: false
     }
   },
   created () {

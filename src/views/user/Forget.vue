@@ -1,14 +1,7 @@
 <template>
   <div class="main user-layout-register">
-    <h4>
-      <span class="littletitle">我们会将邮件发送到您的邮箱，
-并帮助您恢复帐户。</span>
-    </h4>
-    <a-form ref="formRegister" :form="form" id="formRegister">
-      <a-form-item>
-        <h3>
-          <span class="sp">用户名</span>
-        </h3>
+    <a-form ref="formRegister" :form="form" id="formRegister" layout="vertical" :hideRequiredMark="true">
+      <a-form-item label="用户名">
         <a-input
           size="large"
           type="text"
@@ -18,11 +11,8 @@
           <a-icon slot="prefix" type="user" />
         </a-input>
       </a-form-item>
-      
-      <a-form-item>
-        <h3>
-          <span class="sp">电子邮箱</span>
-        </h3>
+     
+      <a-form-item label="电子邮箱">
         <a-input
           size="large"
           type="text"
@@ -32,16 +22,10 @@
           <a-icon slot="prefix" type="mail" />
         </a-input>
       </a-form-item>
-
-      
-
      
       <a-row :gutter="16">
         <a-col class="gutter-row" :span="16">
-          <a-form-item>
-            <h3>
-              <span class="sp">验证码</span>
-            </h3>
+          <a-form-item label="验证码">
             <a-input
               size="large"
               type="text"
@@ -52,10 +36,12 @@
             </a-input>
           </a-form-item>
         </a-col>
-        <a-col :span="4">
-          <img :src="imgSrc" alt="验证码" />
+        <a-col class="gutter-row" :span="4">
+           <div>
+             <img :src="imgSrc" alt="验证码" @click="getCaptchaImg" :style="{marginTop:24 +'px'}" />
+           </div>
         </a-col>
-       
+        
       </a-row>
 
       <a-form-item>
@@ -68,9 +54,9 @@
           @click.stop.prevent="handleSubmit"
           :disabled="registerBtn"
         >发送</a-button>
-        <router-link class="login" :to="{ name: 'login' }">使用已有账户登录</router-link>
+        <!-- <router-link class="login" :to="{ name: 'login' }">使用已有账户登录</router-link> -->
       </a-form-item>
-    </a-form>
+      </a-form>
   </div>
 </template>
 
@@ -78,7 +64,24 @@
 import { getSmsCaptcha, getCaptcha } from '@/api/login'
 import { deviceMixin } from '@/store/device-mixin'
 
-
+const levelNames = {
+  0: '低',
+  1: '低',
+  2: '中',
+  3: '强'
+}
+const levelClass = {
+  0: 'error',
+  1: 'error',
+  2: 'warning',
+  3: 'success'
+}
+const levelColor = {
+  0: '#ff0000',
+  1: '#ff0000',
+  2: '#ff7e05',
+  3: '#52c41a'
+}
 export default {
   name: 'Register',
   components: {},
@@ -98,7 +101,17 @@ export default {
       registerBtn: false
     }
   },
- 
+  computed: {
+    passwordLevelClass() {
+      return levelClass[this.state.passwordLevel]
+    },
+    passwordLevelName() {
+      return levelNames[this.state.passwordLevel]
+    },
+    passwordLevelColor() {
+      return levelColor[this.state.passwordLevel]
+    }
+  },
   mounted() {
     this.getCaptchaImg()
   },
@@ -138,7 +151,7 @@ export default {
       console.log('value', value)
       if (value === undefined) {
         callback(new Error('请输入密码'))
-      }
+      }      
       if (value && password && value.trim() !== password.trim()) {
         callback(new Error('两次密码不一致'))
       }
@@ -279,10 +292,10 @@ export default {
 </style>
 <style lang="less" scoped>
 .user-layout-register {
-  // & > h3 {
-  //   font-size: 16px;
-  //   margin-bottom: 20px;
-  // }
+  & > h3 {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
 
   .getCaptcha {
     display: block;
@@ -291,19 +304,17 @@ export default {
   }
 
   .register-button {
-    width: 50%;
+    width: 100%;
   }
 
   .login {
     float: right;
     line-height: 40px;
   }
-}
-.littletitle {
-  display: inline-block;
-  margin-bottom: 6px;
-}
-h4{
-    color:peru
+  .sp {
+    display: inline-block;
+    height: 30px;
+    line-height: 30px;
+  }
 }
 </style>

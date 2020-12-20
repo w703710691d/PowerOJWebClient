@@ -235,6 +235,11 @@ export const asyncRouterMap = [
           icon: 'table',
           keepAlive: true
         }
+      },{
+        path:'/forget',
+        name: 'forget',
+        hidden:true,
+        component: () => import('@/views/user/Forget')
       }
 
       // other
@@ -335,11 +340,11 @@ export const constantRouterMap = [
         name: 'registerResult',
         component: () => import('@/views/user/RegisterResult')
       },
-      {
-        path: 'forget',
-        name: 'forget',
-        component: () => import('@/views/user/Forget')
-      }
+      // {
+      //   path: 'forget',
+      //   name: 'forget',
+      //   component: () => import('@/views/user/Forget')
+      // }
     ]
   },
   {

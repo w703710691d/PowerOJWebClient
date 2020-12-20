@@ -132,7 +132,7 @@
           :disabled="registerBtn"
         >注册</a-button>
         <!-- <router-link class="login" :to="{ name: 'login' }">使用已有账户登录</router-link> -->
-      </a-form-item>
+        </a-form-item>
     </a-form>
   </div>
 </template>
