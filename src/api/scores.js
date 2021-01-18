@@ -1,25 +1,13 @@
 import request from '@/utils/request'
 
 /**
- * 根据时间获取成绩统计信息
+ * 根据学期统计成绩
  * @param {*} parameter
  */
-export function getScoreByTime (parameter) {
+export function getSemesterByYear (parameter) {
   return request({
-    url: 'http://192.168.1.112:8090/dev/score/getScoreByTime',
+    url: '/dev/score/getSemesterByYear',
     method: 'get',
-    params: parameter
-  })
-}
-
-/**
- * 根据实验id查询成绩 8个实验的id
- * @param {*} parameter
- */
-export function getScoreById (parameter) {
-  return request({
-    url: '/dev/score/findScore',
-    method: 'get',
-    params: parameter
+    params:{ ...parameter}
   })
 }

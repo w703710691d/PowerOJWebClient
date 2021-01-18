@@ -6,7 +6,7 @@ import request from '@/utils/request'
  */
 export function fetchProblemListData (parameter) {
   return request({
-    url: 'problem/index',
+    url: '/dev/problem/index',
     method: 'post',
     data: parameter
   })

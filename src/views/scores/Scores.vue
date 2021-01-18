@@ -1,203 +1,303 @@
 <template>
   <a-card>
-    <a-form-model layout="inline" :model="formInline" @submit="handleSubmit" @submit.native.prevent>
-
-      <a-form-model-item label="Id">
-        <a-input v-model="formInline.id" placeholder="请输入id"></a-input>
-      </a-form-model-item>
-
-      <a-form-model-item label="Term">
-        <a-select v-model="termValue" default-value="name" style="width: 240px" placeholder="please select your term">
-          <a-select-option value="term1"> 2020-2021 第一学期 </a-select-option>
-          <a-select-option value="term2"> 2019-2020 第二学期 </a-select-option>
-        </a-select>
-      </a-form-model-item>
-      <br/>
-      <a-form-model-item>
-        <a-select v-model="selectValue" default-value="name" style="width: 120px" @change="handleChange">
-          <a-select-option value="name"> Name </a-select-option>
-          <a-select-option value="realname"> RealName </a-select-option>
-          <a-select-option value="class"> Class </a-select-option>
-
-          <a-select-option value="date"> Date </a-select-option>
-
-        </a-select>
-      </a-form-model-item>
-
-      <a-form-model-item  label="Date" v-if="selectValue === 'date'">
-        <a-range-picker @change="dateChange">
-          <template slot="dateRender" slot-scope="current">
-            <div class="ant-calendar-date" :style="getCurrentStyle(current)">{{ current.date() }}</div>
-          </template> 
-        </a-range-picker>
-      </a-form-model-item>
-
-      <a-form-model-item>
-        <a-input v-model="inputValue" type="text" placeholder="请输入" />
-      </a-form-model-item>
-
-      <a-form-model-item>
-
-        <!-- :disabled="formInline.id === '' || formInline.date === ''" -->
-
-        <a-button type="primary" html-type="submit">Serach</a-button>
-      </a-form-model-item>
-    </a-form-model>
-    <a-table bordered :data-source="dataSource" :columns="columns">
-      <!-- text表示dataSource中name对应的数据 -->
-      <!-- record表示dataSource中每一个个对象 -->
-      <!-- slot-scope表示需要table中绑定的dataSource的数据 -->
-      <template slot="name" slot-scope="text">{{ text }}</template>
-    </a-table>
+    <a-select
+      name="scope"
+      class="input-small"
+      @change="handleChangeInSelected"
+      :value="reserchObj.semester"
+      :allowClear="true"
+    >
+      <a-select-option
+        v-for="(item,index) in semesterData"
+        :value="item.value"
+        :key="item.value"
+      >{{item.label}}</a-select-option>
+    </a-select>
+    <a-select
+      name="scope"
+      class="input-small"
+      @change="handleChangeInSelected1"
+      :allowClear="true"
+      v-model="reserchObj.type"
+    >
+      <a-select-option value="name" selected>学号</a-select-option>
+      <a-select-option value="realName" selected>姓名</a-select-option>
+      <a-select-option value="classes">班级</a-select-option>
+      <a-select-option value="teacher">教师</a-select-option>
+    </a-select>
+    <a-input
+      placeholder="Search or Goto"
+      style="width: 200px"
+      class="input-medium search-query"
+      v-model="text"
+    />
+    <a-button type="primary"  class="btn" @click="handleSearch">Search</a-button>
+    <br />
+    <br />
+    <a-table
+      :columns="columns"
+      :row-key="record=>record.index"
+      :data-source="data"
+      :pagination="pagination"
+      :loading="loading"
+      @change="handleTableChange"
+      :scroll="{ x: 1680 }"
+      bordered
+    ></a-table>
   </a-card>
 </template>
-
 <script>
-import { getScoreByTime, getScoreById } from '@/api/scores'
-import moment from 'moment'
+import { getSemesterByYear } from '@/api/scores'
+const columns = [
+  {
+    title: '姓名',
+    dataIndex: 'realName', // 对应的是dataSource中的name 一一对应
+    // scopedSlots: { customRender: 'name' }, // 与slot=“name”一一对应
+    width: 80
+    // fixed: 'left'
+  },
+  {
+    title: '学号',
+    dataIndex: 'name',
+    width: 120
+  },
+  {
+    title: '班级',
+    dataIndex: 'classes',
+    width: 120
+  },
+  {
+    title: '教师',
+    dataIndex: 'teacher',
+    width: 80
+  },
+  {
+    title: '实验一',
+    dataIndex: 'ac1',
+    width: 80
+  },
+  {
+    title: '报告一',
+    dataIndex: 'rep1',
+    width: 80
+  },
+  {
+    title: '实验二',
+    dataIndex: 'ac2',
+    width: 80
+  },
+  {
+    title: '报告二',
+    dataIndex: 'rep2',
+    width: 80
+  },
+  {
+    title: '实验三',
+    dataIndex: 'ac3',
+    width: 80
+  },
+  {
+    title: '报告三',
+    dataIndex: 'rep3',
+    width: 80
+  },
+  {
+    title: '实验四',
+    dataIndex: 'ac4',
+    width: 80
+  },
+  {
+    title: '报告四',
+    dataIndex: 'rep4',
+    width: 80
+  },
+  {
+    title: '实验五',
+    dataIndex: 'ac5',
+    width: 80
+  },
+  {
+    title: '报告五',
+    dataIndex: 'rep5',
+    width: 80
+  },
+  {
+    title: '实验六',
+    dataIndex: 'ac6',
+    width: 80
+  },
+  {
+    title: '报告六',
+    dataIndex: 'rep6',
+    width: 80
+  },
+  {
+    title: '实验七',
+    dataIndex: 'ac7',
+    width: 80
+  },
+  {
+    title: '报告七',
+    dataIndex: 'rep7',
+    width: 80
+  },
+  {
+    title: '实验八',
+    dataIndex: 'ac8',
+    width: 80
+  },
+  {
+    title: '报告八',
+    dataIndex: 'rep8'
+    // fixed: 'right',
+    // width: 500
+  }
+]
 
 export default {
+  name: 'scores',
   data() {
+    let enumList = ['AUTUMN_TERM', 'SPRING_TERM']
+    let newYear = new Date().getFullYear()
+    let isSpring = new Date().getMonth() < 6
+    let arr = []
+    for (let i = newYear; i >= newYear - 10; i--) {
+      if (isSpring && i === newYear) {
+        arr.push({
+          label: `${i}年春季`,
+          value: i + '&' + enumList[1]
+        })
+      } else {
+        arr.push({
+          label: `${i}年秋季`,
+          value: i + '&' + enumList[0]
+        })
+        arr.push({
+          label: `${i}年春季`,
+          value: i + '&' + enumList[1]
+        })
+      }
+    }
     return {
-      selectValue: 'name',
-      inputValue: null,
-      termValue:null,
-      formInline: {
-        id: '',
-        endTime: null,
-        startTime: null,
+      columns:columns,
+      data: [],
+      pagination: {
+        // current: 1,
+        // pageSize: 10,
+        // total: 1
       },
-      // 一般是后台给的数据
-      dataSource: [],
-      count: 2,
-      // 一般是前端自定义的数据
-      columns: [
-        {
-          title: 'name',
-          dataIndex: 'name', // 对应的是dataSource中的name 一一对应
-          width: '30%',
-          scopedSlots: { customRender: 'name' }, // 与slot=“name”一一对应
-        },
-        {
-          title: 'realname',
-          dataIndex: 'realName',
-        },
-
-        {
-          title: 'AC1',
-          dataIndex: 'ac1',
-        },
-        {
-          title: 'Rep1',
-          dataIndex: 'rep1',
-        },
-        {
-          title: 'AC2',
-          dataIndex: 'ac2',
-        },
-        {
-          title: 'Rep2',
-          dataIndex: 'rep2',
-        },
-        {
-          title: 'AC3',
-          dataIndex: 'ac3',
-        },
-        {
-          title: 'Rep3',
-          dataIndex: 'rep3',
-        },
-        {
-          title: 'AC4',
-          dataIndex: 'ac4',
-        },
-        {
-          title: 'Rep4',
-          dataIndex: 'rep4',
-        },
-        {
-          title: 'AC5',
-          dataIndex: 'ac5',
-        },
-        {
-          title: 'Rep5',
-          dataIndex: 'rep5',
-        },
-        {
-          title: 'AC6',
-          dataIndex: 'ac6',
-        },
-        {
-          title: 'Rep6',
-          dataIndex: 'rep6',
-        },
-        {
-          title: 'AC7',
-          dataIndex: 'ac7',
-        },
-        {
-          title: 'Rep7',
-          dataIndex: 'rep7',
-        },
-        {
-          title: 'AC8',
-          dataIndex: 'ac8',
-        },
-        {
-          title: 'Rep8',
-          dataIndex: 'rep8',
-        },
-
-        {
-          title: 'class',
-          dataIndex: 'classes',
-        },
-        {
-          title: 'teacher',
-          dataIndex: 'teacher',
-        },
-      ],
-      formLayout: 'horizontal',
-      form: this.$form.createForm(this, { name: 'coordinated' }),
+      loading: false,
+      reserchObj: {
+        // page: 1,
+        // limit: 10,
+        year: newYear,
+        semester: arr[0].value,
+        type: undefined
+      },
+      text: undefined,
+      selected: undefined,
+      totalPage: 1,
+      semesterData: arr
     }
   },
-  methods: {
-    handleChange(value) {
-      console.log(`selected ${value}`)
-    },
-    handleSubmit(e) {
-      const data = {
-        endTime: this.formInline.endTime,
-        startTime: this.formInline.startTime,
-      }
-      // console.log(data)
-      // 这是传给后台的参数
-      getScoreByTime(data)
-        .then((res) => {
-          // 这是后台返回的数据
-          console.log(res)
-          this.dataSource = res.data
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    },
-    // 这是日期选择器自己会返回的两种数据类型
-    dateChange(date, dateString) {
-      this.formInline.startTime = dateString[0] + ' 00:00:00'
-      this.formInline.endTime = dateString[1] + ' 24:00:00'
-    },
-    getCurrentStyle(current, today) {
-      const style = {}
-      if (current.date() === 1) {
-        style.border = '1px solid #1890ff'
-        style.borderRadius = '50%'
-      }
-      return style
-    },
+  created() {},
+  mounted() {
+    // this.fetch()
+    this.getScoresList()
   },
+  methods: {
+    async getScoresList() {
+      try {
+        this.loading = true
+        let sendData = {
+          ...this.reserchObj,
+          semester: this.reserchObj.semester.split('&')[1]
+        }
+        delete sendData.type
+        if (this.reserchObj.type) {
+          sendData[this.reserchObj.type] = this.text
+        }
+        console.log(sendData)
+        let res = await getSemesterByYear(sendData)
+        console.log(res)
+        let pagination = {
+          ...this.pagination,
+          total:res.data.length
+        }
+        this.data = res.data.map((item, index) => ({
+          ...item,
+          xuhao: index
+        }))
+        this.pagination = pagination
+        this.loading = false
+      } catch (error) {
+        console.log(error)
+        this.loading = false
+      }
+    },
+    handleTableChange(pagination) {
+      this.reserchObj = {
+        ...this.reserchObj,
+        page: pagination.current,
+        limit: pagination.pageSize
+      }
+      this.getScoresList()
+    },
+    handleChangeInSelected(value) {
+      this.selected = value
+      this.reserchObj = {
+        ...this.reserchObj,
+        semester: value,
+        year: value.split('&')[0]
+      }
+      console.log(value)
+      this.getScoresList()
+    },
+    handleChangeInSelected1(value) {
+      this.selected = value
+      this.reserchObj = {
+        ...this.reserchObj,
+        type: value
+      }
+      console.log(value)
+    },
+    handleSearch() {
+      // let obj = {}
+      // if (this.selected) obj[this.selected] = this.text
+      // this.reserchObj = { ...obj }
+      this.getScoresList()
+    }
+  }
 }
 </script>
+<style lang="less" scoped>
 
-<style>
+
+input.search-query {
+  display: inline-block;
+  margin-bottom: 0;
+  vertical-align: middle;
+  padding-right: 14px;
+  padding-left: 14px;
+}
+
+.input-small {
+  display: inline-block;
+  width: 150px;
+  margin-left: -3px;
+  vertical-align: middle;
+  font-size: 14px;
+  height: 32px;
+  line-height: 32px;
+}
+
+.btn {
+  vertical-align: top;
+  color: #fff;
+  padding: 4px 12px;
+  margin-bottom: 0;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+}
 </style>
