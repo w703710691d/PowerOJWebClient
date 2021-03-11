@@ -63,10 +63,21 @@ router.beforeEach((to, from, next) => {
           })
           // 失败时，获取用户信息失败时，调用登出，来清空历史保留信息
           store.dispatch('logoutAction').then(() => {
-            next({
-              path: loginRoutePath,
-              query: {
-                redirect: to.fullPath
+            store.dispatch('GenerateRoutes', {
+              roles: ['guest']
+            }).then(() => {
+             
+              router.addRoutes(store.getters.addRouters)
+              const redirect = decodeURIComponent(from.query.redirect || to.path)
+              if (to.path === redirect) {
+                next({
+                  ...to,
+                  replace: true
+                })
+              } else {
+                next({
+                  path: redirect
+                })
               }
             })
           })
@@ -76,9 +87,10 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     if (store.getters.roles.length === 0) {
-      store.commit('SET_ROLES', ['visitor'])
+      console.log("司姗姗")
+      store.commit('SET_ROLES', ['guest'])
       store.dispatch('GenerateRoutes', {
-          roles: ['visitor']
+          roles: ['guest']
         })
         .then(() => {
           router.addRoutes(store.getters.addRouters)

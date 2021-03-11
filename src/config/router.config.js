@@ -60,7 +60,7 @@ export const asyncRouterMap = [
         meta: {
           title: 'Status',
           icon: 'check-square',
-          permission: ['visitor']
+          permission: ['guest']
         } // permission: [ 'form' ] } 权限问题 form是antd本地的样式文件
       },
 

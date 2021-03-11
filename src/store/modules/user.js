@@ -55,14 +55,19 @@ const user = {
 
     getGuestTokenAction ({ commit }) {
       return new Promise((resolve, reject) => {
-        getGuestTokenRequest().then(response => {
-          const result = response.data
-          storage.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
-          commit('SET_TOKEN', result.token)
-          resolve()
-        }).catch(error => {
-          reject(error)
-        })
+        /**
+         * 这里游客的token没有从后台请求，所以直接写死
+         */
+        storage.set(ACCESS_TOKEN, '12345', 7 * 24 * 60 * 60 * 1000)
+        commit('SET_TOKEN', '12345')
+        // getGuestTokenRequest().then(response => {
+        //   const result = response.data
+        //   storage.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
+        //   commit('SET_TOKEN', result.token)
+        //   resolve()
+        // }).catch(error => {
+        //   reject(error)
+        // })
       })
     },
 
